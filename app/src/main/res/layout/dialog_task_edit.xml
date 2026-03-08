@@ -137,7 +137,7 @@
         android:layout_marginBottom="8sp"
         android:layout_height="wrap_content"
         android:background="@color/button_secondary_color"
-        android:text="Edit task" />
+        android:text="Update task" />
 
     <com.rama.adiskide.widgets.WdButton
         android:id="@+id/cancel_button"
