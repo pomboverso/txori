@@ -43,10 +43,10 @@ class TaskAdapter(
         }
 
         // Delete task (remove from list + DB)
-        val deleteTaskButton = view.findViewById<FrameLayout>(R.id.delete_task)
+        val deleteTaskButton = view.findViewById<FrameLayout>(R.id.edit_task)
         deleteTaskButton.setOnClickListener {
             val dialogView = LayoutInflater.from(context)
-                .inflate(R.layout.dialog_task_delete, null)
+                .inflate(R.layout.dialog_task_edit, null)
             val dialog = AlertDialog.Builder(context)
                 .setView(dialogView)
                 .create()

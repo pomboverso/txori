@@ -28,7 +28,7 @@
         android:textColor="@color/foreground_color" />
 
     <FrameLayout
-        android:id="@+id/delete_task"
+        android:id="@+id/edit_task"
         android:background="@color/bg_4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,7 +38,7 @@
         <ImageView
             android:layout_width="24sp"
             android:layout_height="24sp"
-            android:src="@drawable/icon_octagon_times_solid"
+            android:src="@drawable/icon_edit"
             android:textSize="16sp" />
     </FrameLayout>
 
