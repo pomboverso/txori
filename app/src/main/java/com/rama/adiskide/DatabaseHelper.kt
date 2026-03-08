@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.content.ContentValues
 
 class DatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, "tasks.db", null, 4) {
+    SQLiteOpenHelper(context, "tasks.db", null, 5) {
 
     override fun onCreate(db: SQLiteDatabase) {
 
@@ -17,6 +17,7 @@ class DatabaseHelper(context: Context) :
                 type TEXT,
                 label TEXT,
                 difficulty INTEGER,
+                completed BOOL,
                 date_creation INTEGER,
                 date_completion INTEGER
             )
@@ -36,7 +37,8 @@ class DatabaseHelper(context: Context) :
         type: TaskType,
         label: String,
         date: Long,
-        difficulty: Int
+        difficulty: Int,
+        completed: Boolean
     ) {
 
         val values = ContentValues().apply {
@@ -44,6 +46,7 @@ class DatabaseHelper(context: Context) :
             put("label", label)
             put("difficulty", difficulty)
             put("date_creation", date)
+            put("completed", completed)
         }
 
         db.insert("tasks", null, values)
@@ -53,13 +56,13 @@ class DatabaseHelper(context: Context) :
 
         val now = System.currentTimeMillis()
 
-        insertTask(db, TaskType.ROUTINE, "Drink water", now, 1)
-        insertTask(db, TaskType.ROUTINE, "Clean room", now, 1)
-        insertTask(db, TaskType.ROUTINE, "Brush teeth", now, 1)
-        insertTask(db, TaskType.ROUTINE, "Take shower", now, 1)
-        insertTask(db, TaskType.ROUTINE, "Stretch", now, 1)
-        insertTask(db, TaskType.BURNER, "Run", now, 1)
-        insertTask(db, TaskType.BURNER, "Run More", now, 1)
+        insertTask(db, TaskType.ROUTINE, "Drink water", now, 5, false)
+        insertTask(db, TaskType.ROUTINE, "Clean room", now, 5, false)
+        insertTask(db, TaskType.ROUTINE, "Brush teeth", now, 5, false)
+        insertTask(db, TaskType.ROUTINE, "Take shower", now, 5, false)
+        insertTask(db, TaskType.ROUTINE, "Stretch", now, 5, false)
+        insertTask(db, TaskType.BURNER, "Run", now, 5, false)
+        insertTask(db, TaskType.BURNER, "Run More", now, 5, false)
 
     }
 }

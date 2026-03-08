@@ -30,7 +30,7 @@ class MainActivity : CsActivity() {
         val db = dbHelper.readableDatabase
 
         val tasks = mutableListOf<Task>()
-        val cursor = db.rawQuery("SELECT * FROM tasks", null)
+        val cursor = db.rawQuery("SELECT * FROM tasks WHERE completed = 0", null)
 
         while (cursor.moveToNext()) {
 
@@ -47,7 +47,7 @@ class MainActivity : CsActivity() {
 
         cursor.close()
 
-        val adapter = TaskAdapter(this, tasks)
+        val adapter = TaskAdapter(this, tasks, db)
         listView.adapter = adapter
 
     }

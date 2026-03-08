@@ -13,20 +13,20 @@
         android:layout_marginBottom="16sp"
         android:textSize="18sp"
         android:textColor="@color/foreground_color"
-        android:text="@string/delete_group_title"
+        android:text="Are you sure you want to delete this task?"
         android:gravity="center"
         android:textStyle="bold" />
 
     <com.rama.adiskide.widgets.WdButton
-        android:id="@+id/yes_button"
+        android:id="@+id/delete_button"
         android:layout_width="match_parent"
         android:layout_marginBottom="8sp"
         android:layout_height="wrap_content"
         android:background="@color/danger"
-        android:text="@string/delete_group" />
+        android:text="Delete task" />
 
     <com.rama.adiskide.widgets.WdButton
-        android:id="@+id/no_button"
+        android:id="@+id/cancel_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/button_primary_color"
