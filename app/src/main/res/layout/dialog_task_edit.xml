@@ -96,26 +96,31 @@
             android:layout_height="wrap_content">
 
             <RadioButton
+                android:id="@+id/diff_5"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="5xp" />
 
             <RadioButton
+                android:id="@+id/diff_10"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="10xp" />
 
             <RadioButton
+                android:id="@+id/diff_15"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="15xp" />
 
             <RadioButton
+                android:id="@+id/diff_20"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="20xp" />
 
             <RadioButton
+                android:id="@+id/diff_25"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="25xp" />

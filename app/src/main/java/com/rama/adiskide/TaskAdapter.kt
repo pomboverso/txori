@@ -87,18 +87,18 @@ class TaskAdapter(
                 val newType =
                     if (typeGroup.checkedRadioButtonId == typeGroup.getChildAt(0).id) TaskType.BURNER else TaskType.ROUTINE
                 val newDifficulty = when (difficultyGroup.checkedRadioButtonId) {
-                    difficultyGroup.getChildAt(0).id -> 5
-                    difficultyGroup.getChildAt(1).id -> 10
-                    difficultyGroup.getChildAt(2).id -> 15
-                    difficultyGroup.getChildAt(3).id -> 20
-                    difficultyGroup.getChildAt(4).id -> 25
+                    R.id.diff_5 -> 5
+                    R.id.diff_10 -> 10
+                    R.id.diff_15 -> 15
+                    R.id.diff_20 -> 20
+                    R.id.diff_25 -> 25
                     else -> 5
                 }
 
                 // Update database
                 val values = ContentValues().apply {
                     put("label", newLabel)
-                    put("type", if (newType == TaskType.ROUTINE) 1 else 0)
+                    put("type", newType.name)
                     put("difficulty", newDifficulty)
                 }
                 db.update("tasks", values, "id = ?", arrayOf(task.id.toString()))

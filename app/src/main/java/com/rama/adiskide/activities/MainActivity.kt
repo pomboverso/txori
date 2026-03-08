@@ -1,8 +1,6 @@
 package com.rama.adiskide.activities
 
-import android.content.ContentValues
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.ListView
 import com.rama.adiskide.CsActivity
@@ -36,13 +34,13 @@ class MainActivity : CsActivity() {
 
             val id = cursor.getLong(cursor.getColumnIndexOrThrow("id"))
             val label = cursor.getString(cursor.getColumnIndexOrThrow("label"))
-            val type = TaskType.valueOf(
-                cursor.getString(cursor.getColumnIndexOrThrow("type"))
-            )
+            val typeString = cursor.getString(cursor.getColumnIndexOrThrow("type"))
+            val type = TaskType.valueOf(typeString)
+            val difficulty = cursor.getInt(cursor.getColumnIndexOrThrow("difficulty"))
 
             val dateCreation = cursor.getLong(cursor.getColumnIndexOrThrow("date_creation"))
 
-            tasks.add(Task(id, type, label, 1, dateCreation, null))
+            tasks.add(Task(id, type, label, difficulty, dateCreation, null))
         }
 
         cursor.close()
