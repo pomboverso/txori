@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.rama.adiskide.R
-import kotlin.io.root
 
 class WdButton @JvmOverloads constructor(
     context: Context,

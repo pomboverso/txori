@@ -29,14 +29,17 @@
         android:layout_height="wrap_content"
         android:padding="16sp"
         android:orientation="vertical"
-        android:layout_marginBottom="8sp"
+        android:layout_marginBottom="16sp"
         android:background="@color/bg_secondary"
         android:gravity="center_vertical">
 
         <EditText
             android:id="@+id/label"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true" />
     </LinearLayout>
 
     <TextView
@@ -45,87 +48,24 @@
         android:layout_marginBottom="8sp"
         android:textSize="16sp"
         android:textColor="@color/foreground_color"
-        android:text="Type" />
+        android:text="Duration (seconds)" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16sp"
         android:orientation="vertical"
-        android:layout_marginBottom="8sp"
+        android:layout_marginBottom="24sp"
         android:background="@color/bg_secondary"
         android:gravity="center_vertical">
 
-        <RadioGroup
-            android:id="@+id/type"
+        <EditText
+            android:id="@+id/duration"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Burner" />
-
-            <RadioButton
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Routine" />
-        </RadioGroup>
-    </LinearLayout>
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8sp"
-        android:textSize="16sp"
-        android:textColor="@color/foreground_color"
-        android:text="Difficulty" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16sp"
-        android:orientation="vertical"
-        android:layout_marginBottom="8sp"
-        android:background="@color/bg_secondary"
-        android:gravity="center_vertical">
-
-        <RadioGroup
-            android:id="@+id/difficulty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <RadioButton
-                android:id="@+id/diff_5"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="5xp" />
-
-            <RadioButton
-                android:id="@+id/diff_10"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="10xp" />
-
-            <RadioButton
-                android:id="@+id/diff_15"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="15xp" />
-
-            <RadioButton
-                android:id="@+id/diff_20"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="20xp" />
-
-            <RadioButton
-                android:id="@+id/diff_25"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="25xp" />
-
-        </RadioGroup>
+            android:layout_height="wrap_content"
+            android:inputType="number"
+            android:maxLines="1"
+            android:singleLine="true" />
     </LinearLayout>
 
     <com.rama.adiskide.widgets.WdButton
