@@ -2,9 +2,7 @@ package com.rama.adiskide
 
 data class Task(
     val id: Long = 0,
-    var type: TaskType,
     var label: String,
-    var difficulty: Int = 0,
-    val dateCreation: Long,
-    var dateCompletion: Long? = null
+    var duration: Int = 0,
+    var completion_count: Int = 0,
 )

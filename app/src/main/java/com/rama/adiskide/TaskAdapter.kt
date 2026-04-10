@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.*
 import com.rama.adiskide.R
 import com.rama.adiskide.Task
-import com.rama.adiskide.TaskType
 import com.rama.adiskide.widgets.WdButton
 
 class TaskAdapter(
@@ -26,10 +25,10 @@ class TaskAdapter(
         val task = tasks[position]
 
         val label = view.findViewById<TextView>(R.id.task_label)
-//        val icon = view.findViewById<ImageView>(R.id.task_icon)
-
         label.text = task.label
-//        icon.setImageResource(if (task.type == TaskType.ROUTINE) R.drawable.icon_seedlings else R.drawable.icon_fire)
+
+        val duration = view.findViewById<TextView>(R.id.task_duration)
+        duration.text = "$task.duration"
 
         // Complete task (remove from list only)
 //        val completeTaskButton = view.findViewById<FrameLayout>(R.id.complete_task)

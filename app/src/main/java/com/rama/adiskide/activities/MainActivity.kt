@@ -7,7 +7,6 @@ import com.rama.adiskide.CsActivity
 import com.rama.adiskide.DatabaseHelper
 import com.rama.adiskide.R
 import com.rama.adiskide.Task
-import com.rama.adiskide.TaskType
 import com.rama.adiskide.adapters.TaskAdapter
 
 class MainActivity : CsActivity() {
@@ -34,13 +33,9 @@ class MainActivity : CsActivity() {
 
             val id = cursor.getLong(cursor.getColumnIndexOrThrow("id"))
             val label = cursor.getString(cursor.getColumnIndexOrThrow("label"))
-            val typeString = cursor.getString(cursor.getColumnIndexOrThrow("type"))
-            val type = TaskType.valueOf(typeString)
-            val difficulty = cursor.getInt(cursor.getColumnIndexOrThrow("difficulty"))
+            val duration = cursor.getInt(cursor.getColumnIndexOrThrow("duration"))
 
-            val dateCreation = cursor.getLong(cursor.getColumnIndexOrThrow("date_creation"))
-
-            tasks.add(Task(id, type, label, difficulty, dateCreation, null))
+            tasks.add(Task(id, label, duration, 0))
         }
 
         cursor.close()
