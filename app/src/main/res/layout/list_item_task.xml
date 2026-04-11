@@ -1,27 +1,43 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/app_row"
-    android:orientation="horizontal"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/app_row_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="12sp"
-    android:background="@color/bg_secondary"
-    android:gravity="center_vertical">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/task_label"
-        android:layout_width="wrap_content"
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/bg_secondary" />
+
+    <View
+        android:id="@+id/progress_bg"
+        android:layout_width="100dp"
+        android:layout_height="match_parent"
+        android:background="@color/progress_color" />
+    
+    <LinearLayout
+        android:id="@+id/app_row"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:text="Tarea"
-        android:layout_weight="1"
-        android:textColor="@color/foreground_color" />
+        android:padding="12sp"
+        android:gravity="center_vertical">
 
-    <TextView
-        android:id="@+id/task_duration"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:text="0:30"
-        android:textColor="@color/disabled" />
+        <TextView
+            android:id="@+id/task_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Tarea"
+            android:textSize="16sp"
+            android:textColor="@color/foreground_color" />
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/task_duration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0:30"
+            android:textSize="16sp"
+            android:textColor="@color/disabled" />
+    </LinearLayout>
+
+</FrameLayout>

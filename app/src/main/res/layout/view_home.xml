@@ -182,6 +182,23 @@
         </FrameLayout>
 
         <FrameLayout
+            android:id="@+id/timer_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/button_primary_color"
+            android:layout_marginEnd="2dp"
+            android:layout_weight="1"
+            android:padding="12sp">
+
+            <ImageView
+                android:layout_width="24sp"
+                android:layout_height="24sp"
+                android:layout_gravity="center"
+                android:src="@drawable/icon_clock"
+                android:textSize="16sp" />
+        </FrameLayout>
+
+        <FrameLayout
             android:id="@+id/settings_nav"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -36,6 +36,8 @@ class TaskAdapter(
             true
         }
 
+//        updateProgress(0.5f, view)
+
         return view
     }
 
@@ -46,6 +48,19 @@ class TaskAdapter(
             if (s == 0) "${m}m" else "${m}m ${s}s"
         } else {
             "${seconds}s"
+        }
+    }
+
+    fun updateProgress(progress: Float, itemView: View) {
+        val container = itemView.findViewById<View>(R.id.app_row_container)
+        val progressView = itemView.findViewById<View>(R.id.progress_bg)
+
+        container.post {
+            val totalWidth = container.width
+            val newWidth = (totalWidth * progress).toInt()
+
+            progressView.layoutParams.width = newWidth
+            progressView.requestLayout()
         }
     }
 
