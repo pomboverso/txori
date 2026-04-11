@@ -19,39 +19,42 @@ class TaskAdapter(
 ) : ArrayAdapter<Task>(context, 0, tasks) {
 
     private var activeIndex: Int = -1
-    // progress per position (0f–1f); only meaningful for the active row
-    private val progressMap = mutableMapOf<Int, Float>()
-    // live view references so we can update without a full notifyDataSetChanged
-    private val viewMap = mutableMapOf<Int, View>()
+    private var activeProgress: Float = 0f
 
-    // Called by MainActivity to highlight the running task
     fun setActiveIndex(index: Int) {
         activeIndex = index
-        progressMap.clear()
+        activeProgress = 0f
         notifyDataSetChanged()
     }
 
-    // Called every 100 ms by MainActivity to push the progress bar forward
+    // Called every 100 ms — only updates the single visible active row
     fun setProgress(index: Int, progress: Float) {
-        progressMap[index] = progress
-        viewMap[index]?.let { updateProgress(progress, it) }
+        if (index != activeIndex) return
+        activeProgress = progress
+
+        // Find the active row's view directly from the ListView
+        val listView = (context as? android.app.Activity)
+            ?.findViewById<ListView>(R.id.task_list) ?: return
+
+        val firstVisible = listView.firstVisiblePosition
+        val localPosition = index - firstVisible
+        if (localPosition < 0 || localPosition >= listView.childCount) return
+
+        val itemView = listView.getChildAt(localPosition) ?: return
+        applyProgress(progress, itemView)
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val view = convertView ?: LayoutInflater.from(context)
             .inflate(R.layout.list_item_task, parent, false)
 
-        // Cache the view so setProgress() can reach it without a list scan
-        viewMap[position] = view
-
         val task = tasks[position]
-
         view.findViewById<TextView>(R.id.task_label).text = task.label
         view.findViewById<TextView>(R.id.task_duration).text = formatDuration(task.duration)
 
-        // Restore progress (or reset to 0 for non-active rows)
-        val p = if (position == activeIndex) progressMap[position] ?: 0f else 0f
-        updateProgress(p, view)
+        // Apply correct progress for this position
+        val p = if (position == activeIndex) activeProgress else 0f
+        applyProgress(p, view)
 
         view.setOnLongClickListener {
             showEditDialog(task, position)
@@ -61,9 +64,7 @@ class TaskAdapter(
         return view
     }
 
-    // ── Internal helpers ────────────────────────────────────────
-
-    private fun updateProgress(progress: Float, itemView: View) {
+    private fun applyProgress(progress: Float, itemView: View) {
         val container = itemView.findViewById<View>(R.id.app_row_container)
         val progressView = itemView.findViewById<View>(R.id.progress_bg)
 
@@ -140,7 +141,6 @@ class TaskAdapter(
             db.delete("workout_steps", "task_id = ?", arrayOf(task.id.toString()))
             db.delete("tasks", "id = ?", arrayOf(task.id.toString()))
             tasks.removeAt(position)
-            viewMap.remove(position)
             notifyDataSetChanged()
             dialog.dismiss()
             parentDialog.dismiss()
