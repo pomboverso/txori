@@ -1,0 +1,72 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/app_row_header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center">
+
+    <TextView
+        android:id="@+id/group_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="[-] Workout :: 44:00"
+        android:textSize="18sp"
+        android:paddingTop="12sp"
+        android:paddingBottom="12sp"
+        android:textColor="@color/foreground" />
+
+    <FrameLayout
+        android:id="@+id/add_task"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12sp">
+
+        <ImageView
+            android:layout_width="18sp"
+            android:layout_height="18sp"
+            android:src="@drawable/icon_plus_solid"
+            android:textSize="16sp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/delete_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12sp">
+
+        <ImageView
+            android:layout_width="18sp"
+            android:layout_height="18sp"
+            android:src="@drawable/icon_times_solid"
+            android:textSize="16sp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/reset_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12sp">
+
+        <ImageView
+            android:layout_width="18sp"
+            android:layout_height="18sp"
+            android:src="@drawable/icon_refresh"
+            android:textSize="16sp" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/start_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12sp">
+
+        <ImageView
+            android:id="@+id/start_group_icon"
+            android:layout_width="18sp"
+            android:layout_height="18sp"
+            android:src="@drawable/icon_play"
+            android:textSize="16sp" />
+    </FrameLayout>
+
+</LinearLayout>

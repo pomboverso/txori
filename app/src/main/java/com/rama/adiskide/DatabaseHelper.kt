@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.content.ContentValues
 
 class DatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, "tasks.db", null, 17) {
+    SQLiteOpenHelper(context, "tasks.db", null, 18) {
 
     override fun onCreate(db: SQLiteDatabase) {
 
@@ -181,9 +181,16 @@ class DatabaseHelper(context: Context) :
 
     private fun insertInitialData(db: SQLiteDatabase) {
 
-        val s1Id = insertSession(db, "Upper Body Flow")
         var n = 1
+        val s0Id = insertSession(db, "Morining Routine")
+        fun s0(label: String, duration: Int) {
+            insertSessionStep(db, s0Id, getOrCreateTaskId(db, label, duration), n++)
+        }
 
+        s0("Organize Room", 60 * 5)
+        s0("Drink Water", 60 * 5)
+
+        val s1Id = insertSession(db, "Workout")
         fun s1(label: String, duration: Int) {
             insertSessionStep(db, s1Id, getOrCreateTaskId(db, label, duration), n++)
         }
