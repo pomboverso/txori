@@ -31,8 +31,6 @@ class SessionAdapter(
 
     private var activeItemIndex: Int = -1
     private var activeProgress: Float = 0f
-
-    // FIX 4: track collapsed session IDs
     private val collapsedSessions: MutableSet<Long> = mutableSetOf()
 
     fun setActiveItemIndex(index: Int) {
@@ -54,7 +52,7 @@ class SessionAdapter(
         applyProgress(progress, itemView)
     }
 
-    // FIX 4: filter out rows belonging to collapsed sessions
+    // filter out rows belonging to collapsed sessions
     override fun getCount(): Int {
         var count = 0
         for (item in items) {
@@ -109,12 +107,11 @@ class SessionAdapter(
         val totalSec = header.tasks.sumOf { it.duration }
         val timeStr = formatGroupTime(totalSec)
         val isCollapsed = collapsedSessions.contains(header.sessionId)
-        val collapseIndicator = if (isCollapsed) "▶" else "▼"
+        val collapseIndicator = if (isCollapsed) "[-]" else "[+]"
 
         view.findViewById<TextView>(R.id.group_label).text =
             "$collapseIndicator ${header.name} :: $timeStr"
 
-        // FIX 4: pressing the header label collapses/uncollapses the group
         view.findViewById<TextView>(R.id.group_label).setOnClickListener {
             if (collapsedSessions.contains(header.sessionId)) {
                 collapsedSessions.remove(header.sessionId)
@@ -124,7 +121,6 @@ class SessionAdapter(
             notifyDataSetChanged()
         }
 
-        // FIX 3: long press on the header label to edit the session
         view.findViewById<TextView>(R.id.group_label).setOnLongClickListener {
             showEditSessionDialog(header, position)
             true

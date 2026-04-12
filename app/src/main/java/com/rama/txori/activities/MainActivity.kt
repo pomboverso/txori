@@ -35,8 +35,6 @@ class MainActivity : CsActivity() {
     private var currentTimer: CountDownTimer? = null
     private var remainingMs: Long = 0
     private var isRunning: Boolean = false
-
-    // FIX 1: Global session timer
     private var globalRemainingMs: Long = 0
     private var globalTimer: CountDownTimer? = null
 
@@ -71,7 +69,6 @@ class MainActivity : CsActivity() {
             if (currentItemIndex >= 0) loadTask(currentItemIndex)
         }
 
-        // FIX 1: increase_duration also adds to the global session timer
         findViewById<View>(R.id.increase_duration).setOnClickListener {
             if (isRunning) {
                 currentTimer?.cancel()
@@ -186,8 +183,9 @@ class MainActivity : CsActivity() {
         taskNameView.text = row.task.label
         remainingMs = row.task.duration * 1_000L
         adapter.setActiveItemIndex(index)
-        // FIX 7: scroll to the active task
-        listView.smoothScrollToPosition(index)
+        listView.post {
+            listView.setSelectionFromTop(index, 0)
+        }
         updateNextTaskDisplay()
         launchTimer(remainingMs)
     }
@@ -216,7 +214,6 @@ class MainActivity : CsActivity() {
         timerView.text = "00:00"
         nextTaskView.text = "---"
         adapter.setActiveItemIndex(-1)
-        // FIX 6: show play icon (not pause) when workout is finished
         adapter.setGroupPlayingState(doneSessionId, false)
     }
 
@@ -259,7 +256,6 @@ class MainActivity : CsActivity() {
         }.start()
     }
 
-    // FIX 1: Global timer tracks total remaining session time
     private fun launchGlobalTimer(durationMs: Long) {
         globalTimer?.cancel()
         globalTimer = object : CountDownTimer(durationMs, 1000) {
@@ -278,14 +274,9 @@ class MainActivity : CsActivity() {
         timerView.text = String.format("%02d:%02d", totalSeconds / 60, totalSeconds % 60)
     }
 
-    //  Add Group dialog (FIX 2: same layout/structure as Edit dialog)
-
     private fun showAddGroupDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_session_edit, null)
         val dialog = AlertDialog.Builder(this).setView(dialogView).create()
-
-//        val title = dialog.findViewById<TextView>(R.id.modal_title)
-//        title.text = "Edit group"
 
         val input = dialogView.findViewById<EditText>(R.id.edit_text)
         input.hint = "Group name"
