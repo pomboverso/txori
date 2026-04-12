@@ -77,7 +77,7 @@
                 <ImageView
                     android:layout_width="24sp"
                     android:layout_height="24sp"
-                    android:src="@drawable/icon_30s"
+                    android:src="@drawable/icon_30_timer"
                     android:textSize="16sp" />
             </FrameLayout>
 
