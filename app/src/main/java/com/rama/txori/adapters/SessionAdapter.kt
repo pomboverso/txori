@@ -32,6 +32,9 @@ class SessionAdapter(
     private var activeItemIndex: Int = -1
     private var activeProgress: Float = 0f
 
+    // FIX 4: track collapsed session IDs
+    private val collapsedSessions: MutableSet<Long> = mutableSetOf()
+
     fun setActiveItemIndex(index: Int) {
         activeItemIndex = index
         activeProgress = 0f
@@ -51,20 +54,46 @@ class SessionAdapter(
         applyProgress(progress, itemView)
     }
 
-    override fun getCount() = items.size
-    override fun getItem(position: Int) = items[position]
+    // FIX 4: filter out rows belonging to collapsed sessions
+    override fun getCount(): Int {
+        var count = 0
+        for (item in items) {
+            when (item) {
+                is SessionItem.Header -> count++
+                is SessionItem.Row -> if (!collapsedSessions.contains(item.sessionId)) count++
+            }
+        }
+        return count
+    }
+
+    // Map visible position -> actual items index
+    private fun getActualPosition(visiblePosition: Int): Int {
+        var visible = 0
+        for (i in items.indices) {
+            val item = items[i]
+            val skip = item is SessionItem.Row && collapsedSessions.contains(item.sessionId)
+            if (!skip) {
+                if (visible == visiblePosition) return i
+                visible++
+            }
+        }
+        return visiblePosition
+    }
+
+    override fun getItem(position: Int) = items[getActualPosition(position)]
     override fun getItemId(position: Int) = position.toLong()
     override fun getViewTypeCount() = 2
 
-    override fun getItemViewType(position: Int) = when (items[position]) {
+    override fun getItemViewType(position: Int) = when (items[getActualPosition(position)]) {
         is SessionItem.Header -> TYPE_HEADER
         is SessionItem.Row -> TYPE_TASK
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-        return when (val item = items[position]) {
-            is SessionItem.Header -> getHeaderView(item, position, convertView, parent)
-            is SessionItem.Row -> getTaskView(item, position, convertView, parent)
+        val actualPos = getActualPosition(position)
+        return when (val item = items[actualPos]) {
+            is SessionItem.Header -> getHeaderView(item, actualPos, convertView, parent)
+            is SessionItem.Row -> getTaskView(item, actualPos, convertView, parent)
         }
     }
 
@@ -79,9 +108,27 @@ class SessionAdapter(
 
         val totalSec = header.tasks.sumOf { it.duration }
         val timeStr = formatGroupTime(totalSec)
+        val isCollapsed = collapsedSessions.contains(header.sessionId)
+        val collapseIndicator = if (isCollapsed) "▶" else "▼"
 
         view.findViewById<TextView>(R.id.group_label).text =
-            "${header.name} :: $timeStr"
+            "$collapseIndicator ${header.name} :: $timeStr"
+
+        // FIX 4: pressing the header label collapses/uncollapses the group
+        view.findViewById<TextView>(R.id.group_label).setOnClickListener {
+            if (collapsedSessions.contains(header.sessionId)) {
+                collapsedSessions.remove(header.sessionId)
+            } else {
+                collapsedSessions.add(header.sessionId)
+            }
+            notifyDataSetChanged()
+        }
+
+        // FIX 3: long press on the header label to edit the session
+        view.findViewById<TextView>(R.id.group_label).setOnLongClickListener {
+            showEditSessionDialog(header, position)
+            true
+        }
 
         view.findViewById<View>(R.id.start_group).setOnClickListener {
             onStartGroup(header.sessionId, position + 1)
@@ -93,10 +140,6 @@ class SessionAdapter(
 
         view.findViewById<View>(R.id.add_task).setOnClickListener {
             showAddTaskDialog(header, position)
-        }
-
-        view.findViewById<View>(R.id.delete_group).setOnClickListener {
-            showDeleteGroupDialog(header)
         }
 
         return view
@@ -156,7 +199,7 @@ class SessionAdapter(
         return view
     }
 
-    //  Progress 
+    //  Progress
 
     private fun applyProgress(progress: Float, itemView: View) {
         val container = itemView.findViewById<View>(R.id.app_row_container) ?: return
@@ -171,7 +214,7 @@ class SessionAdapter(
         }
     }
 
-    //  Play/pause icon on the active header 
+    //  Play/pause icon on the active header
 
     fun setGroupPlayingState(sessionId: Long, playing: Boolean) {
         val listView = (context as? android.app.Activity)
@@ -197,7 +240,57 @@ class SessionAdapter(
         notifyDataSetChanged()
     }
 
-    //  Dialogs 
+    //  Dialogs
+    private fun showEditSessionDialog(header: SessionItem.Header, position: Int) {
+        val dialogView = LayoutInflater.from(context)
+            .inflate(R.layout.dialog_session_edit, null)
+
+        val dialog = AlertDialog.Builder(context).setView(dialogView).create()
+
+        val title = dialogView.findViewById<TextView>(R.id.modal_title)
+        title.text = "Edit Group"
+
+        val input = dialogView.findViewById<EditText>(R.id.edit_text)
+        input.setText(header.name)
+
+        dialogView.findViewById<WdButton>(R.id.yes_button).apply {
+            setText("Save")
+            setOnClickListener {
+                val newName = input.text.toString().trim()
+                if (newName.isEmpty()) {
+                    input.error = "Name cannot be empty"
+                    return@setOnClickListener
+                }
+                val values = ContentValues().apply { put("name", newName) }
+                db.update("sessions", values, "id = ?", arrayOf(header.sessionId.toString()))
+
+                // Update header in items list
+                val headerIdx = items.indexOfFirst {
+                    it is SessionItem.Header && it.sessionId == header.sessionId
+                }
+                if (headerIdx >= 0) {
+                    val old = items[headerIdx] as SessionItem.Header
+                    items[headerIdx] = old.copy(name = newName)
+                }
+                notifyDataSetChanged()
+                onDataChanged()
+                dialog.dismiss()
+            }
+        }
+
+        // Delete button deletes the group
+        dialogView.findViewById<WdButton>(R.id.reset_button).apply {
+            visibility = View.VISIBLE
+            setText("Delete Group")
+            setOnClickListener {
+                dialog.dismiss()
+                showDeleteGroupDialog(header)
+            }
+        }
+
+        dialogView.findViewById<WdButton>(R.id.no_button).setOnClickListener { dialog.dismiss() }
+        dialog.show()
+    }
 
     private fun showAddTaskDialog(header: SessionItem.Header, headerPosition: Int) {
         val dialogView = LayoutInflater.from(context)
@@ -256,6 +349,7 @@ class SessionAdapter(
                             (item is SessionItem.Row && item.sessionId == header.sessionId)
                 }
 
+                collapsedSessions.remove(header.sessionId)
                 notifyDataSetChanged()
                 onDataChanged()
             }
@@ -313,7 +407,7 @@ class SessionAdapter(
         dialog.show()
     }
 
-    //  Formatting 
+    //  Formatting
 
     private fun formatDuration(seconds: Int): String {
         return if (seconds >= 60) {

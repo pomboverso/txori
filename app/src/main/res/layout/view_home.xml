@@ -42,7 +42,7 @@
             android:layout_marginBottom="8sp"
             android:layout_gravity="center"
             android:textColor="@color/disabled"
-            android:text="Next" />
+            android:text="---" />
 
         <LinearLayout
             android:layout_width="match_parent"

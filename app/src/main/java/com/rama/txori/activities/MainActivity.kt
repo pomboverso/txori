@@ -24,16 +24,21 @@ class MainActivity : CsActivity() {
     // Top panel
     private lateinit var taskNameView: TextView
     private lateinit var timerView: TextView
+    private lateinit var nextTaskView: TextView
 
     // Flat list of all items
     private val items: MutableList<SessionItem> = mutableListOf()
 
     // Running state
-    private var currentItemIndex: Int = -1   // index into items[] of the active Row
+    private var currentItemIndex: Int = -1
     private var activeSessionId: Long = -1
     private var currentTimer: CountDownTimer? = null
     private var remainingMs: Long = 0
     private var isRunning: Boolean = false
+
+    // FIX 1: Global session timer
+    private var globalRemainingMs: Long = 0
+    private var globalTimer: CountDownTimer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,6 +50,7 @@ class MainActivity : CsActivity() {
         listView = findViewById(R.id.task_list)
         taskNameView = findViewById(R.id.current_task_name)
         timerView = findViewById(R.id.current_task_timer)
+        nextTaskView = findViewById(R.id.next_task_name)
 
         db = dbHelper.writableDatabase
         loadItems()
@@ -60,15 +66,19 @@ class MainActivity : CsActivity() {
         )
         listView.adapter = adapter
 
-        //  Top panel control buttons 
+        //  Top panel control buttons
         findViewById<View>(R.id.repeat_task).setOnClickListener {
             if (currentItemIndex >= 0) loadTask(currentItemIndex)
         }
 
+        // FIX 1: increase_duration also adds to the global session timer
         findViewById<View>(R.id.increase_duration).setOnClickListener {
             if (isRunning) {
                 currentTimer?.cancel()
                 remainingMs += 30_000L
+                globalTimer?.cancel()
+                globalRemainingMs += 30_000L
+                launchGlobalTimer(globalRemainingMs)
                 launchTimer(remainingMs)
             }
         }
@@ -77,13 +87,13 @@ class MainActivity : CsActivity() {
         findViewById<View>(R.id.complete_task).setOnClickListener(advance)
         findViewById<View>(R.id.skip_task).setOnClickListener(advance)
 
-        //  Add Group button 
+        //  Add Group button
         findViewById<WdButton>(R.id.add_group_button).setOnClickListener {
             showAddGroupDialog()
         }
     }
 
-    //  Data loading 
+    //  Data loading
 
     private fun loadItems() {
         items.clear()
@@ -97,46 +107,63 @@ class MainActivity : CsActivity() {
         }
     }
 
-    //  Group start / reset 
+    //  Group start / reset
 
     private fun handleStartGroup(sessionId: Long, startIndex: Int) {
         when {
-            // Same group: toggle play/pause
             activeSessionId == sessionId && isRunning -> {
                 pauseTimer()
+                globalTimer?.cancel()
                 adapter.setGroupPlayingState(sessionId, false)
             }
 
             activeSessionId == sessionId && !isRunning && currentItemIndex >= 0 -> {
                 adapter.setGroupPlayingState(sessionId, true)
                 resumeTimer()
+                launchGlobalTimer(globalRemainingMs)
             }
-            // Different group or fresh start
+
             else -> {
                 stopCurrentTimer()
+                globalTimer?.cancel()
                 activeSessionId = sessionId
+                globalRemainingMs = calculateSessionRemainingMs(sessionId, startIndex)
                 startFromIndex(startIndex)
                 adapter.setGroupPlayingState(sessionId, true)
+                launchGlobalTimer(globalRemainingMs)
             }
         }
+    }
+
+    private fun calculateSessionRemainingMs(sessionId: Long, fromIndex: Int): Long {
+        var total = 0L
+        for (i in fromIndex until items.size) {
+            val item = items[i]
+            if (item is SessionItem.Row && item.sessionId == sessionId) {
+                total += item.task.duration * 1_000L
+            }
+        }
+        return total
     }
 
     private fun handleResetGroup(sessionId: Long) {
         if (activeSessionId == sessionId) {
             stopCurrentTimer()
+            globalTimer?.cancel()
+            globalRemainingMs = 0
             activeSessionId = -1
             currentItemIndex = -1
             adapter.setActiveItemIndex(-1)
             adapter.setGroupPlayingState(sessionId, false)
             taskNameView.text = "Kaixo!"
             timerView.text = "00:00"
+            nextTaskView.text = "---"
         }
     }
 
-    //  Sequence control 
+    //  Sequence control
 
     private fun startFromIndex(index: Int) {
-        // Find next Row item from index onward that belongs to activeSessionId
         val target = (index until items.size).firstOrNull {
             val item = items[it]
             item is SessionItem.Row && item.sessionId == activeSessionId
@@ -159,22 +186,41 @@ class MainActivity : CsActivity() {
         taskNameView.text = row.task.label
         remainingMs = row.task.duration * 1_000L
         adapter.setActiveItemIndex(index)
+        // FIX 7: scroll to the active task
         listView.smoothScrollToPosition(index)
+        updateNextTaskDisplay()
         launchTimer(remainingMs)
+    }
+
+    private fun updateNextTaskDisplay() {
+        val nextIndex = (currentItemIndex + 1 until items.size).firstOrNull {
+            val item = items[it]
+            item is SessionItem.Row && item.sessionId == activeSessionId
+        }
+        val nextRow = nextIndex?.let { items[it] as? SessionItem.Row }
+        if (nextRow != null) {
+            nextTaskView.text = "Next: ${nextRow.task.label}"
+        } else {
+            nextTaskView.text = "---"
+        }
     }
 
     private fun finishGroup() {
         isRunning = false
+        globalTimer?.cancel()
+        globalRemainingMs = 0
         val doneSessionId = activeSessionId
         activeSessionId = -1
         currentItemIndex = -1
         taskNameView.text = "Done!"
         timerView.text = "00:00"
+        nextTaskView.text = "---"
         adapter.setActiveItemIndex(-1)
+        // FIX 6: show play icon (not pause) when workout is finished
         adapter.setGroupPlayingState(doneSessionId, false)
     }
 
-    //  Timer 
+    //  Timer
 
     private fun pauseTimer() {
         currentTimer?.cancel()
@@ -213,16 +259,33 @@ class MainActivity : CsActivity() {
         }.start()
     }
 
+    // FIX 1: Global timer tracks total remaining session time
+    private fun launchGlobalTimer(durationMs: Long) {
+        globalTimer?.cancel()
+        globalTimer = object : CountDownTimer(durationMs, 1000) {
+            override fun onTick(millisUntilFinished: Long) {
+                globalRemainingMs = millisUntilFinished
+            }
+
+            override fun onFinish() {
+                globalRemainingMs = 0
+            }
+        }.start()
+    }
+
     private fun updateTimerDisplay(ms: Long) {
         val totalSeconds = (ms / 1000).coerceAtLeast(0)
         timerView.text = String.format("%02d:%02d", totalSeconds / 60, totalSeconds % 60)
     }
 
-    //  Add Group dialog 
+    //  Add Group dialog (FIX 2: same layout/structure as Edit dialog)
 
     private fun showAddGroupDialog() {
-        val dialogView = layoutInflater.inflate(R.layout.dialog_session_add, null)
+        val dialogView = layoutInflater.inflate(R.layout.dialog_session_edit, null)
         val dialog = AlertDialog.Builder(this).setView(dialogView).create()
+
+//        val title = dialog.findViewById<TextView>(R.id.modal_title)
+//        title.text = "Edit group"
 
         val input = dialogView.findViewById<EditText>(R.id.edit_text)
         input.hint = "Group name"
@@ -250,6 +313,7 @@ class MainActivity : CsActivity() {
 
     override fun onDestroy() {
         currentTimer?.cancel()
+        globalTimer?.cancel()
         dbHelper.close()
         super.onDestroy()
     }
