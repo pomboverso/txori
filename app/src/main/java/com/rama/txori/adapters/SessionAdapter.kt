@@ -12,6 +12,7 @@ import com.rama.txori.DatabaseHelper
 import com.rama.txori.R
 import com.rama.txori.SessionItem
 import com.rama.txori.Task
+import com.rama.txori.managers.FontManager
 import com.rama.txori.widgets.WdButton
 
 class SessionAdapter(
@@ -138,6 +139,7 @@ class SessionAdapter(
             showAddTaskDialog(header, position)
         }
 
+        FontManager.applyToView(context, view)
         return view
     }
 
@@ -160,14 +162,11 @@ class SessionAdapter(
 
         for (i in items.indices) {
             val item = items[i]
-
             if (item is SessionItem.Row &&
                 item.sessionId == row.sessionId &&
                 item.task.label == row.task.label
             ) {
-                if (i == position) {
-                    currentIndex = runningIndex
-                }
+                if (i == position) currentIndex = runningIndex
                 runningIndex++
             }
         }
@@ -176,7 +175,6 @@ class SessionAdapter(
         occurrence = currentIndex + 1
 
         val freqView = view.findViewById<TextView>(R.id.task_frequency)
-
         if (total > 1) {
             freqView.visibility = View.VISIBLE
             freqView.text = "$occurrence / $total"
@@ -192,6 +190,7 @@ class SessionAdapter(
             true
         }
 
+        FontManager.applyToView(context, view)
         return view
     }
 
@@ -241,6 +240,7 @@ class SessionAdapter(
         val dialogView = LayoutInflater.from(context)
             .inflate(R.layout.dialog_session_edit, null)
 
+        FontManager.applyToView(context, dialogView)
         val dialog = AlertDialog.Builder(context).setView(dialogView).create()
 
         val title = dialogView.findViewById<TextView>(R.id.modal_title)
@@ -292,6 +292,7 @@ class SessionAdapter(
         val dialogView = LayoutInflater.from(context)
             .inflate(R.layout.dialog_task_edit, null)
 
+        FontManager.applyToView(context, dialogView)
         val dialog = AlertDialog.Builder(context).setView(dialogView).create()
 
         dialogView.findViewById<TextView>(R.id.modal_title).setText("Add new task")
@@ -357,6 +358,7 @@ class SessionAdapter(
         val dialogView = LayoutInflater.from(context)
             .inflate(R.layout.dialog_task_edit, null)
 
+        FontManager.applyToView(context, dialogView)
         val dialog = AlertDialog.Builder(context).setView(dialogView).create()
 
         val labelInput = dialogView.findViewById<EditText>(R.id.label)

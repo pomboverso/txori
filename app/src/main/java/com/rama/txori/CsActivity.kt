@@ -6,14 +6,13 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowInsets
 import android.view.WindowManager
+import com.rama.txori.managers.FontManager
 import com.rama.txori.utils.dp
 
 abstract class CsActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val root = findViewById<View>(android.R.id.content)
 
         // Allow drawing behind system bars
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
@@ -31,6 +30,14 @@ abstract class CsActivity : Activity() {
             window.attributes.layoutInDisplayCutoutMode =
                 WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_SHORT_EDGES
         }
+    }
+
+    /**
+     * Apply the custom font to the entire view tree rooted at [root].
+     * Call this after setContentView() in every activity subclass.
+     */
+    protected fun applyFont(root: View) {
+        FontManager.applyToView(this, root)
     }
 
     protected fun applyEdgeToEdgePadding(root: View) {

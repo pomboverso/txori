@@ -19,6 +19,7 @@ class AboutActivity : CsActivity() {
 
         val root = findViewById<View>(android.R.id.content)
         applyEdgeToEdgePadding(root)
+        applyFont(root)
 
         val closeButton = findViewById<View>(R.id.close_button)
         closeButton.setOnClickListener {

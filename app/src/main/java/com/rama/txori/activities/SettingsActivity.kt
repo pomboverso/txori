@@ -11,7 +11,9 @@ class SettingsActivity : CsActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.view_settings)
 
-        applyEdgeToEdgePadding(findViewById(android.R.id.content))
+        val settingsRoot = findViewById<android.view.View>(android.R.id.content)
+        applyEdgeToEdgePadding(settingsRoot)
+        applyFont(settingsRoot)
 
         setupBasicButtons()
     }

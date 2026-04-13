@@ -12,6 +12,7 @@ import com.rama.txori.DatabaseHelper
 import com.rama.txori.R
 import com.rama.txori.SessionItem
 import com.rama.txori.adapters.SessionAdapter
+import com.rama.txori.managers.FontManager
 import com.rama.txori.widgets.WdButton
 
 class MainActivity : CsActivity() {
@@ -44,6 +45,7 @@ class MainActivity : CsActivity() {
 
         val root = findViewById<View>(R.id.root)
         applyEdgeToEdgePadding(root)
+        applyFont(root)
 
         listView = findViewById(R.id.task_list)
         taskNameView = findViewById(R.id.current_task_name)
@@ -60,9 +62,13 @@ class MainActivity : CsActivity() {
             dbHelper = dbHelper,
             onStartGroup = { sessionId, startIndex -> handleStartGroup(sessionId, startIndex) },
             onResetGroup = { sessionId -> handleResetGroup(sessionId) },
-            onDataChanged = { /* headers auto-update via notifyDataSetChanged */ }
+            // Re-apply font to list rows whenever the adapter refreshes the list
+            onDataChanged = { FontManager.applyToListView(this, listView) }
         )
         listView.adapter = adapter
+
+        // Re-apply font after the list has laid out its initial rows
+        listView.post { FontManager.applyToListView(this, listView) }
 
         //  Top panel control buttons
         findViewById<View>(R.id.repeat_task).setOnClickListener {
@@ -196,11 +202,7 @@ class MainActivity : CsActivity() {
             item is SessionItem.Row && item.sessionId == activeSessionId
         }
         val nextRow = nextIndex?.let { items[it] as? SessionItem.Row }
-        if (nextRow != null) {
-            nextTaskView.text = "Next: ${nextRow.task.label}"
-        } else {
-            nextTaskView.text = "---"
-        }
+        nextTaskView.text = if (nextRow != null) "Next: ${nextRow.task.label}" else "---"
     }
 
     private fun finishGroup() {
@@ -276,6 +278,7 @@ class MainActivity : CsActivity() {
 
     private fun showAddGroupDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_session_edit, null)
+        FontManager.applyToView(this, dialogView)
         val dialog = AlertDialog.Builder(this).setView(dialogView).create()
 
         val input = dialogView.findViewById<EditText>(R.id.edit_text)
@@ -292,6 +295,7 @@ class MainActivity : CsActivity() {
                 val newId = dbHelper.createSession(db, name)
                 items.add(SessionItem.Header(newId, name, emptyList()))
                 adapter.notifyDataSetChanged()
+                FontManager.applyToListView(this@MainActivity, listView)
                 dialog.dismiss()
             }
         }
