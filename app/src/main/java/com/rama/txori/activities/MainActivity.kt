@@ -16,12 +16,18 @@ import com.rama.txori.managers.FontManager
 import com.rama.txori.widgets.WdButton
 
 class MainActivity : CsActivity() {
-    private var mediaPlayer: android.media.MediaPlayer? = null
     private var beepArmed: Boolean = false
     private lateinit var listView: ListView
     private lateinit var adapter: SessionAdapter
     private val dbHelper by lazy { DatabaseHelper(this) }
     private lateinit var db: android.database.sqlite.SQLiteDatabase
+
+    private val toneGen by lazy {
+        android.media.ToneGenerator(
+            android.media.AudioManager.STREAM_ALARM,
+            100
+        )
+    }
 
     // Top panel
     private lateinit var taskNameView: TextView
@@ -257,12 +263,12 @@ class MainActivity : CsActivity() {
 
                 if (secondsLeft in 1..4 && secondsLeft != lastBeepSecond) {
                     lastBeepSecond = secondsLeft
-                    playSound(R.raw.beeps_01)
+                    toneGen.startTone(android.media.ToneGenerator.TONE_PROP_BEEP, 150)
                 }
 
                 if (secondsLeft == 0L && secondsLeft != lastBeepSecond) {
                     lastBeepSecond = secondsLeft
-                    playSound(R.raw.beeps_15)
+                    toneGen.startTone(android.media.ToneGenerator.TONE_CDMA_ALERT_CALL_GUARD, 150)
                 }
             }
 
@@ -287,16 +293,6 @@ class MainActivity : CsActivity() {
                 adapter.updateActiveHeaderTimer(activeSessionId, 0)
             }
         }.start()
-    }
-
-    private fun playSound(rawResId: Int) {
-        try {
-            mediaPlayer?.release()
-            mediaPlayer = android.media.MediaPlayer.create(this, rawResId)
-            mediaPlayer?.setOnCompletionListener { it.release() }
-            mediaPlayer?.start()
-        } catch (_: Exception) {
-        }
     }
 
     private fun updateTimerDisplay(ms: Long) {
@@ -333,12 +329,10 @@ class MainActivity : CsActivity() {
         dialogView.findViewById<WdButton>(R.id.no_button).setOnClickListener { dialog.dismiss() }
         dialog.show()
     }
-    
+
     override fun onDestroy() {
         currentTimer?.cancel()
         globalTimer?.cancel()
-        mediaPlayer?.release()
-        mediaPlayer = null
         dbHelper.close()
         super.onDestroy()
     }
