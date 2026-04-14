@@ -8,6 +8,7 @@
     android:textColor="?attr/foregroundColor">
 
     <LinearLayout
+        android:id="@+id/time_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="32sp"
@@ -123,11 +124,29 @@
 
     <com.rama.txori.widgets.WdButton
         android:id="@+id/add_group_button"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8sp"
         android:background="@color/button_secondary_color"
         android:text="+ Add Group" />
+
+    <com.rama.txori.widgets.WdButton
+        android:id="@+id/edit_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8sp"
+        android:background="@color/button_secondary_color"
+        android:text="Switch to Edit Mode" />
+
+    <com.rama.txori.widgets.WdButton
+        android:id="@+id/work_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8sp"
+        android:visibility="gone"
+        android:background="@color/button_secondary_color"
+        android:text="Switch to Work Mode" />
 
     <LinearLayout
         android:layout_width="match_parent"

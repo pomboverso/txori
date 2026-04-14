@@ -60,6 +60,16 @@ class MainActivity : CsActivity() {
         timerView = findViewById(R.id.current_task_timer)
         nextTaskView = findViewById(R.id.next_task_name)
 
+        val workButton =
+            findViewById<WdButton>(R.id.work_button)
+        val editButton =
+            findViewById<WdButton>(R.id.edit_button)
+        val repeatTaskButton = findViewById<View>(R.id.repeat_task)
+        val increaseTimeButton = findViewById<View>(R.id.increase_duration)
+        val completeTaskButton = findViewById<View>(R.id.complete_task)
+        val skipTaskButton = findViewById<View>(R.id.skip_task)
+        val timeContainer = findViewById<View>(R.id.time_container)
+
         db = dbHelper.writableDatabase
         loadItems()
 
@@ -79,11 +89,11 @@ class MainActivity : CsActivity() {
         listView.post { FontManager.applyToListView(this, listView) }
 
         //  Top panel control buttons
-        findViewById<View>(R.id.repeat_task).setOnClickListener {
+        repeatTaskButton.setOnClickListener {
             if (currentItemIndex >= 0) loadTask(currentItemIndex)
         }
 
-        findViewById<View>(R.id.increase_duration).setOnClickListener {
+        increaseTimeButton.setOnClickListener {
             if (isRunning) {
                 currentTimer?.cancel()
                 remainingMs += 30_000L
@@ -95,12 +105,30 @@ class MainActivity : CsActivity() {
         }
 
         val advance: (View) -> Unit = { advanceToNext() }
-        findViewById<View>(R.id.complete_task).setOnClickListener(advance)
-        findViewById<View>(R.id.skip_task).setOnClickListener(advance)
+        completeTaskButton.setOnClickListener(advance)
+        skipTaskButton.setOnClickListener(advance)
 
-        //  Add Group button
-        findViewById<WdButton>(R.id.add_group_button).setOnClickListener {
+        val addGroupButton = findViewById<WdButton>(R.id.add_group_button)
+        addGroupButton.setOnClickListener {
             showAddGroupDialog()
+        }
+
+        editButton.setOnClickListener {
+            addGroupButton.visibility = View.VISIBLE
+            workButton.visibility = View.VISIBLE
+            editButton.visibility = View.GONE
+            timeContainer.visibility = View.GONE
+
+            stopCurrentTimer()
+            globalTimer?.cancel()
+            isRunning = false
+        }
+
+        workButton.setOnClickListener {
+            addGroupButton.visibility = View.GONE
+            workButton.visibility = View.GONE
+            editButton.visibility = View.VISIBLE
+            timeContainer.visibility = View.VISIBLE
         }
     }
 

@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.content.ContentValues
 
 class DatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, "tasks.db", null, 21) {
+    SQLiteOpenHelper(context, "tasks.db", null, 22) {
 
     override fun onCreate(db: SQLiteDatabase) {
 
@@ -265,9 +265,9 @@ class DatabaseHelper(context: Context) :
             addRest()
         }
 
-        s1("Hip Thrust x30", 90)
+        s1("Hip Thrust x30", 60)
         addRest()
-        s1("Hip Thrust x30", 90)
+        s1("Hip Thrust x30", 60)
         addRest()
 
         s1("Wall Sit", 60)
