@@ -139,10 +139,11 @@ class SessionAdapter(
         val isCollapsed = collapsedSessions.contains(header.sessionId)
         val collapseIndicator = if (isCollapsed) "[-]" else "[+]"
 
-        view.findViewById<TextView>(R.id.group_label).text =
+        val groupLabel = view.findViewById<TextView>(R.id.group_label)
+        groupLabel.text =
             "$collapseIndicator ${header.name} :: $timeStr"
 
-        view.findViewById<TextView>(R.id.group_label).setOnClickListener {
+        groupLabel.setOnClickListener {
             if (collapsedSessions.contains(header.sessionId)) {
                 collapsedSessions.remove(header.sessionId)
             } else {
@@ -167,26 +168,35 @@ class SessionAdapter(
             showAddTaskDialog(header, position)
         }
 
-        view.findViewById<View>(R.id.start_group).setOnClickListener {
+        val startGroupButton = view.findViewById<View>(R.id.start_group)
+        startGroupButton.setOnClickListener {
             onStartGroup(header.sessionId, position + 1)
         }
+        startGroupButton.visibility = if (isEditMode) View.GONE else View.VISIBLE
 
         // In edit mode force play icon regardless of playing state
         val playingSessionIds = playingSessions
         view.findViewById<ImageView>(R.id.start_group_icon)
             .setImageResource(
-                if (!isEditMode && playingSessionIds.contains(header.sessionId))
+                if (playingSessionIds.contains(header.sessionId))
                     R.drawable.icon_pause
                 else
                     R.drawable.icon_play
             )
 
-        view.findViewById<View>(R.id.reset_group).setOnClickListener {
+        val resetGroupButton = view.findViewById<View>(R.id.reset_group)
+        resetGroupButton.setOnClickListener {
             onResetGroup(header.sessionId)
         }
+        resetGroupButton.visibility = if (isEditMode) View.GONE else View.VISIBLE
 
         FontManager.applyToView(context, view)
         return view
+    }
+
+    fun stopAllPlaying() {
+        playingSessions.clear()
+        notifyDataSetChanged()
     }
 
     private fun getTaskView(

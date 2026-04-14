@@ -118,6 +118,8 @@ class MainActivity : CsActivity() {
             workButton.visibility = View.VISIBLE
             editButton.visibility = View.GONE
             timeContainer.visibility = View.GONE
+
+            adapter.stopAllPlaying()
             adapter.setEditMode(true)
 
             stopCurrentTimer()
