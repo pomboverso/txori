@@ -151,17 +151,19 @@ class SessionAdapter(
             notifyDataSetChanged()
         }
 
-        view.findViewById<View>(R.id.edit_session_button).visibility =
+        val editSessionButton = view.findViewById<View>(R.id.edit_session_button)
+        editSessionButton.visibility =
             if (!isEditMode) View.GONE else View.VISIBLE
-        view.findViewById<View>(R.id.edit_session_button).setOnClickListener {
+        editSessionButton.setOnClickListener {
             showEditSessionDialog(header, position)
             true
         }
 
         // Hide add_task button in edit mode
-        view.findViewById<View>(R.id.add_task).visibility =
+        val addTaskButton = view.findViewById<View>(R.id.add_task)
+        addTaskButton.visibility =
             if (!isEditMode) View.GONE else View.VISIBLE
-        view.findViewById<View>(R.id.add_task).setOnClickListener {
+        addTaskButton.setOnClickListener {
             showAddTaskDialog(header, position)
         }
 
@@ -229,10 +231,12 @@ class SessionAdapter(
         val p = if (position == activeItemIndex) activeProgress else 0f
         applyProgress(p, view)
 
-        view.setOnLongClickListener {
+        val editTaskButton = view.findViewById<View>(R.id.edit_task_button)
+        editTaskButton.setOnClickListener {
             showEditTaskDialog(row, position)
             true
         }
+        editTaskButton.visibility = if (!isEditMode) View.GONE else View.VISIBLE
 
         FontManager.applyToView(context, view)
         return view
