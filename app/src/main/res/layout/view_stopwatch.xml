@@ -20,6 +20,7 @@
         android:layout_height="wrap_content">
 
         <com.rama.txori.widgets.WdButton
+            android:id="@+id/reset_counter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Reset counter"
