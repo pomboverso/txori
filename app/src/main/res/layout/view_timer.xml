@@ -80,6 +80,14 @@
             android:layout_marginBottom="8sp"
             android:background="@color/button_secondary_color" />
 
+        <com.rama.txori.widgets.WdButton
+            android:id="@+id/edit_mode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Switch to Edit Mode"
+            android:layout_marginBottom="8sp"
+            android:background="@color/button_secondary_color" />
+        
         <com.rama.txori.widgets.WdNavbar
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

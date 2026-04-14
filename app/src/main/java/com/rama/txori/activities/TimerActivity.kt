@@ -2,6 +2,7 @@ package com.rama.txori.activities
 
 import android.content.Context
 import android.os.Bundle
+import android.os.CountDownTimer
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -9,6 +10,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.rama.txori.CsActivity
 import com.rama.txori.R
+import com.rama.txori.widgets.WdButton
 
 class TimerActivity : CsActivity() {
 
@@ -16,6 +18,16 @@ class TimerActivity : CsActivity() {
     private lateinit var editView: LinearLayout
     private lateinit var timerInput: EditText
     private lateinit var addTimer: View
+    private lateinit var startButton: WdButton
+    private lateinit var resetButton: WdButton
+    private lateinit var editModeButton: WdButton
+
+    private var timer: CountDownTimer? = null
+    private var isRunning = false
+
+    private var initialMs = 0L
+    private var remainingMs = 0L
+    private var isEditMode = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,31 +41,83 @@ class TimerActivity : CsActivity() {
         editView = findViewById(R.id.edit_view)
         timerInput = findViewById(R.id.timer)
         addTimer = findViewById(R.id.add_timer)
+        startButton = findViewById(R.id.start_timer)
+        resetButton = findViewById(R.id.reset_timer)
+        editModeButton = findViewById(R.id.edit_mode)
 
         timerButton.text = "00:00:00"
 
+        editModeButton.setOnClickListener {
+            setEditMode(!isEditMode)
+        }
+
         timerButton.setOnClickListener {
-            showEditor()
+            toggleTimer()
+        }
+
+        startButton.setOnClickListener {
+            toggleTimer()
         }
 
         addTimer.setOnClickListener {
             applyInput()
         }
+
+        resetButton.setOnClickListener {
+            resetTimer()
+        }
     }
 
-    private fun showEditor() {
-        timerButton.visibility = View.GONE
-        editView.visibility = View.VISIBLE
+    private fun toggleTimer() {
+        if (isRunning) {
+            pauseTimer()
+        } else {
+            startTimer()
+        }
 
-        val digits = timerButton.text.toString()
-            .filter { it.isDigit() }
-            .trimStart('0')
+        startButton.setText(
+            if (isRunning) "Pause timer"
+            else "Start timer"
+        )
+    }
 
-        timerInput.setText(digits)
-        timerInput.setSelection(timerInput.text.length)
-        timerInput.requestFocus()
+    private fun updateEditModeUI() {
+        if (isEditMode) {
 
-        showKeyboard()
+            editModeButton.setText("Switch to work mode")
+
+            timerButton.visibility = View.GONE
+            editView.visibility = View.VISIBLE
+            startButton.visibility = View.GONE
+            resetButton.visibility = View.GONE
+
+            val digits = timerButton.text.toString()
+                .filter { it.isDigit() }
+                .takeLast(6)
+                .trimStart('0')
+
+            timerInput.setText(digits)
+            timerInput.setSelection(timerInput.text.length)
+            timerInput.requestFocus()
+
+            showKeyboard()
+
+        } else {
+
+            editModeButton.setText("Switch to edit mode")
+
+            editView.visibility = View.GONE
+            timerButton.visibility = View.VISIBLE
+            startButton.visibility = View.VISIBLE
+            resetButton.visibility = View.VISIBLE
+
+            hideKeyboard()
+        }
+    }
+
+    private fun setEditMode(enabled: Boolean) {
+        isEditMode = enabled
+        updateEditModeUI()
     }
 
     private fun applyInput() {
@@ -61,22 +125,69 @@ class TimerActivity : CsActivity() {
             .filter { it.isDigit() }
             .takeLast(6)
 
-        timerButton.text = formatDigits(digits)
+        val formatted = formatDigits(digits)
+        timerButton.text = formatted
 
-        editView.visibility = View.GONE
-        timerButton.visibility = View.VISIBLE
+        initialMs = digitsToMillis(digits)
+        remainingMs = initialMs
 
-        hideKeyboard()
+        setEditMode(false)
+    }
+
+    private fun startTimer() {
+        if (remainingMs <= 0L) return
+
+        isRunning = true
+
+        timer = object : CountDownTimer(remainingMs, 1000) {
+            override fun onTick(ms: Long) {
+                remainingMs = ms
+                timerButton.text = formatMillis(ms)
+            }
+
+            override fun onFinish() {
+                remainingMs = 0L
+                isRunning = false
+                timerButton.text = "00:00:00"
+            }
+        }.start()
+    }
+
+    private fun pauseTimer() {
+        timer?.cancel()
+        isRunning = false
+    }
+
+    private fun resetTimer() {
+        timer?.cancel()
+        isRunning = false
+        remainingMs = initialMs
+        timerButton.text = formatMillis(initialMs)
+    }
+
+    private fun digitsToMillis(digits: String): Long {
+        val padded = digits.padStart(6, '0')
+
+        val hh = padded.substring(0, 2).toLong()
+        val mm = padded.substring(2, 4).toLong()
+        val ss = padded.substring(4, 6).toLong()
+
+        return ((hh * 3600) + (mm * 60) + ss) * 1000
     }
 
     private fun formatDigits(digits: String): String {
         val padded = digits.padStart(6, '0')
+        return "${padded.substring(0, 2)}:${padded.substring(2, 4)}:${padded.substring(4, 6)}"
+    }
 
-        val hh = padded.substring(0, 2)
-        val mm = padded.substring(2, 4)
-        val ss = padded.substring(4, 6)
+    private fun formatMillis(ms: Long): String {
+        val total = ms / 1000
 
-        return "$hh:$mm:$ss"
+        val hh = total / 3600
+        val mm = (total % 3600) / 60
+        val ss = total % 60
+
+        return "%02d:%02d:%02d".format(hh, mm, ss)
     }
 
     private fun showKeyboard() {
