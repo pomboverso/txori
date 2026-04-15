@@ -6,7 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import android.content.ContentValues
 
 class DatabaseHelper(context: Context) :
-    SQLiteOpenHelper(context, "tasks.db", null, 23) {
+    SQLiteOpenHelper(context, "tasks.db", null, 24) {
 
     override fun onCreate(db: SQLiteDatabase) {
 
@@ -16,8 +16,7 @@ class DatabaseHelper(context: Context) :
             CREATE TABLE tasks (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 label TEXT,
-                duration INTEGER,
-                completion_count INTEGER DEFAULT 0
+                duration INTEGER
             )
             """.trimIndent()
         )
@@ -61,7 +60,7 @@ class DatabaseHelper(context: Context) :
     fun getAllTasks(db: SQLiteDatabase): MutableList<Task> {
         val tasks = mutableListOf<Task>()
         val cursor = db.rawQuery(
-            "SELECT id, label, duration, completion_count FROM tasks ORDER BY label", null
+            "SELECT id, label, duration FROM tasks ORDER BY label", null
         )
         while (cursor.moveToNext()) {
             tasks.add(
@@ -69,7 +68,6 @@ class DatabaseHelper(context: Context) :
                     id = cursor.getLong(0),
                     label = cursor.getString(1),
                     duration = cursor.getInt(2),
-                    completion_count = cursor.getInt(3)
                 )
             )
         }
@@ -82,7 +80,7 @@ class DatabaseHelper(context: Context) :
         val tasks = mutableListOf<Task>()
         val cursor = db.rawQuery(
             """
-            SELECT t.id, t.label, t.duration, t.completion_count
+            SELECT t.id, t.label, t.duration
             FROM session_steps ss
             JOIN tasks t ON ss.task_id = t.id
             WHERE ss.session_id = ?
@@ -96,7 +94,6 @@ class DatabaseHelper(context: Context) :
                     id = cursor.getLong(0),
                     label = cursor.getString(1),
                     duration = cursor.getInt(2),
-                    completion_count = cursor.getInt(3)
                 )
             )
         }
@@ -195,7 +192,7 @@ class DatabaseHelper(context: Context) :
         val tasks = mutableListOf<Task>()
         val cursor = db.rawQuery(
             """
-            SELECT t.id, t.label, t.duration, t.completion_count
+            SELECT t.id, t.label, t.duration
             FROM session_steps ss
             JOIN tasks t ON ss.task_id = t.id
             ORDER BY ss.session_id, ss.step_order
@@ -207,8 +204,7 @@ class DatabaseHelper(context: Context) :
                 Task(
                     id = cursor.getLong(0),
                     label = cursor.getString(1),
-                    duration = cursor.getInt(2),
-                    completion_count = cursor.getInt(3)
+                    duration = cursor.getInt(2)
                 )
             )
         }
