@@ -67,7 +67,7 @@ class SessionAdapter(
     }
 
     // Maps a raw index in items[] to its visible ListView position, or -1 if hidden.
-    private fun rawIndexToVisiblePosition(rawIndex: Int): Int {
+    fun rawIndexToVisiblePosition(rawIndex: Int): Int {
         val item = items.getOrNull(rawIndex) ?: return -1
         // If it's a row in a collapsed session it isn't visible at all
         if (item is SessionItem.Row && collapsedSessions.contains(item.sessionId)) return -1

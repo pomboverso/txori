@@ -285,7 +285,10 @@ class MainActivity : CsActivity() {
         remainingMs = row.task.duration * 1_000L
         adapter.setActiveItemIndex(index)
         listView.post {
-            listView.setSelectionFromTop(index, 0)
+            val visiblePos = adapter.rawIndexToVisiblePosition(index)
+            if (visiblePos >= 0) {
+                listView.setSelectionFromTop(visiblePos, 0)
+            }
         }
         updateNextTaskDisplay()
         launchTimer(remainingMs)
