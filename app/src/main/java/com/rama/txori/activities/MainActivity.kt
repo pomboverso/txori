@@ -256,6 +256,7 @@ class MainActivity : CsActivity() {
             taskNameView.text = "Kaixo!"
             timerView.text = "00:00"
             nextTaskView.text = "---"
+            globalControllers.visibility = View.GONE
         }
     }
 
