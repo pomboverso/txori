@@ -1,32 +1,18 @@
-![Preview](https://raw.githubusercontent.com/jmiguelrivas/mako/refs/heads/master/metadata/mako_preview.svg)
+![Preview](./docs/img/txori_header_1280x630.svg)
 
 # Txori
 
-**Mako** is a **minimal, privacy-first Android launcher** designed for focus, speed, and
-simplicity.
+**Txori** is...
 
-Built entirely in **native Kotlin**, Mako runs fully **on-device**, avoids tracking, and keeps
-distractions to a minimum by emphasizing clarity and intentional interaction.
-
+Built entirely in **native Kotlin**, Txori runs fully **on-device**, avoids tracking, and ...
 
 ---
 
 ## Screenshots
 
-| Home                                                                                                                                         | Settings                                                                                                                                         | About                                                                                                                                         |
-|----------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| ![Home](https://raw.githubusercontent.com/jmiguelrivas/mako/refs/heads/master/fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | ![Settings](https://raw.githubusercontent.com/jmiguelrivas/mako/refs/heads/master/fastlane/metadata/android/en-US/images/phoneScreenshots/4.png) | ![About](https://raw.githubusercontent.com/jmiguelrivas/mako/refs/heads/master/fastlane/metadata/android/en-US/images/phoneScreenshots/5.png) |
-
----
-
-## Permissions
-
-Mako Launcher requires **only essential permissions**:
-
-- **Set as Home App** – to function as a launcher
-- **Query Installed Apps** – to list and launch applications
-
-No network access is required.
+| Tasks                                                                     | Stopwatch                                                                     | About                                                                     |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| ![Home](./fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | ![Settings](./fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) | ![About](./fastlane/metadata/android/en-US/images/phoneScreenshots/3.png) |
 
 ---
 
@@ -42,17 +28,17 @@ No network access is required.
 
 ## Usage
 
-* Long-press in an empty area of the **app list** to open **Settings**.
-* Watch the **[Mako Demo / Walkthrough](https://www.youtube.com/watch?v=cfble2DRqyM)** for a quick
+- Long-press in an empty area of the **app list** to open **Settings**.
+- Watch the **[Mako Demo / Walkthrough](https://www.youtube.com/watch?v=cfble2DRqyM)** for a quick
   overview.
 
 ---
 
 ## Installation
 
-* Available on **[F-Droid](https://f-droid.org/app/com.rama.mako)** for easy installation and
+- Available on **[F-Droid](https://f-droid.org/app/com.rama.mako)** for easy installation and
   updates.
-* Download the latest APK from the **[Releases page](https://github.com/jmiguelrivas/mako/releases)
+- Download the latest APK from the **[Releases page](https://github.com/pomboverso/mako/releases)
   ** or use **[Obtanium](https://github.com/ImranR98/Obtainium)** to get the newest version directly
   from the github releases.
 
@@ -68,12 +54,22 @@ No network access is required.
 
 ## License
 
-**Mako** is Free Software. You are free to use, study, share, and improve it under the terms of the
+**Txori** is Free Software. You are free to use, study, share, and improve it under the terms of the
 **GNU General Public License v3** or later.
 
 ---
 
-## Acknowledgements
+## Tested Devices
 
-Inspired by [YAML Launcher](https://f-droid.org/en/packages/eu.ottop.yamlauncher/) and other
-privacy-focused Android tooling.
+| Device       | OS         | Year | Status      |
+| ------------ | ---------- | ---- | ----------- |
+| Pixel 8 Pro  | Android 16 | 2026 | ✅ Verified |
+| Pixel 6      | GrapheneOS | 2026 | ✅ Verified |
+| Samsung On 5 | Android 6  | 2015 | ✅ Verified |
+
+---
+
+## Documents
+
+- [Branding](./docs/branding.md)
+- [Attributions](./docs/attributions.md)
