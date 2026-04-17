@@ -11,6 +11,7 @@
         android:layout_height="match_parent"
         android:fillViewport="true"
         android:layout_weight="1"
+        android:layout_marginBottom="8sp"
         android:background="@color/bg_primary">
 
         <LinearLayout
