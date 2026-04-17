@@ -11,6 +11,7 @@ import android.widget.TextView
 import com.rama.txori.CsActivity
 import com.rama.txori.R
 import com.rama.txori.widgets.WdButton
+import com.rama.txori.widgets.WdNavbar
 
 class TimerActivity : CsActivity() {
 
@@ -21,13 +22,13 @@ class TimerActivity : CsActivity() {
     private lateinit var startButton: WdButton
     private lateinit var resetButton: WdButton
     private lateinit var editModeButton: WdButton
+    private lateinit var navbar: WdNavbar
     private var isRunning = false
 
     private var initialMs = 0L
     private var remainingMs = 0L
     private var isEditMode = false
     private var startTime = 0L
-    private var pausedAt = 0L
     private val handler = android.os.Handler(android.os.Looper.getMainLooper())
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +46,7 @@ class TimerActivity : CsActivity() {
         startButton = findViewById(R.id.start_timer)
         resetButton = findViewById(R.id.reset_timer)
         editModeButton = findViewById(R.id.edit_mode)
+        navbar = findViewById(R.id.navbar)
 
         timerButton.text = "00:00:00"
 
@@ -54,6 +56,11 @@ class TimerActivity : CsActivity() {
 
         timerButton.setOnClickListener {
             toggleTimer()
+        }
+
+        timerButton.setOnLongClickListener {
+            resetTimer()
+            true
         }
 
         startButton.setOnClickListener {
@@ -67,6 +74,8 @@ class TimerActivity : CsActivity() {
         resetButton.setOnClickListener {
             resetTimer()
         }
+
+        updateButtons()
     }
 
     private fun toggleTimer() {
@@ -82,6 +91,24 @@ class TimerActivity : CsActivity() {
         )
     }
 
+    private fun updateButtons() {
+        val hasTimer = initialMs > 0L
+        val canStart = remainingMs > 0L
+        val hasTimerActive = remainingMs > 0L
+
+        startButton.visibility =
+            if (hasTimer && !isEditMode && hasTimerActive) View.VISIBLE else View.GONE
+
+        resetButton.visibility =
+            if (hasTimer && !isEditMode) View.VISIBLE else View.GONE
+
+        startButton.setText(
+            if (isRunning) "Pause timer" else "Start timer"
+        )
+
+        startButton.isEnabled = canStart || isRunning
+    }
+
     private fun updateEditModeUI() {
         if (isEditMode) {
 
@@ -89,8 +116,6 @@ class TimerActivity : CsActivity() {
 
             timerButton.visibility = View.GONE
             editView.visibility = View.VISIBLE
-            startButton.visibility = View.GONE
-            resetButton.visibility = View.GONE
             addTimer.visibility = View.VISIBLE
 
             val digits = timerButton.text.toString()
@@ -105,17 +130,15 @@ class TimerActivity : CsActivity() {
             showKeyboard()
 
         } else {
-
             editModeButton.setText("Switch to edit mode")
 
             editView.visibility = View.GONE
             addTimer.visibility = View.GONE
             timerButton.visibility = View.VISIBLE
-            startButton.visibility = View.VISIBLE
-            resetButton.visibility = View.VISIBLE
 
             hideKeyboard()
         }
+        updateButtons()
     }
 
     private fun setEditMode(enabled: Boolean) {
@@ -134,6 +157,7 @@ class TimerActivity : CsActivity() {
         initialMs = digitsToMillis(digits)
         remainingMs = initialMs
 
+        updateButtons()
         setEditMode(false)
     }
 
@@ -142,41 +166,50 @@ class TimerActivity : CsActivity() {
             if (!isRunning) return
 
             val elapsed = SystemClock.elapsedRealtime() - startTime
-            val msLeft = initialMs - elapsed
+            val msLeft = remainingMs - elapsed
 
             if (msLeft <= 0) {
                 timerButton.text = "00:00:00"
                 isRunning = false
                 remainingMs = 0L
+                updateButtons()
                 return
             }
 
-            remainingMs = msLeft
             timerButton.text = formatMillis(msLeft)
-
-            handler.postDelayed(this, 16) // smooth updates (~60fps)
+            handler.postDelayed(this, 16)
         }
     }
 
     private fun startTimer() {
         if (remainingMs <= 0L) return
+
         isRunning = true
         startTime = SystemClock.elapsedRealtime()
         handler.post(ticker)
+        navbar.visibility = View.GONE
+        updateButtons()
     }
 
     private fun pauseTimer() {
+        if (!isRunning) return
+
+        val elapsed = SystemClock.elapsedRealtime() - startTime
+        remainingMs -= elapsed
+
         isRunning = false
+        navbar.visibility = View.VISIBLE
         handler.removeCallbacks(ticker)
-        pausedAt = remainingMs
+        updateButtons()
     }
 
     private fun resetTimer() {
         handler.removeCallbacks(ticker)
         isRunning = false
+        navbar.visibility = View.VISIBLE
         remainingMs = initialMs
-        pausedAt = 0L
         timerButton.text = formatMillis(initialMs)
+        updateButtons()
     }
 
     private fun digitsToMillis(digits: String): Long {

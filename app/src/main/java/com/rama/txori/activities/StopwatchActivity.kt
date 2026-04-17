@@ -13,7 +13,9 @@ import com.rama.txori.widgets.WdNavbar
 
 class StopwatchActivity : CsActivity() {
 
-    private var counterView: TextView? = null
+    private lateinit var counterView: TextView
+    private lateinit var counterStartButton: WdButton
+    private lateinit var counterResetButton: WdButton
 
     private val handler = Handler(Looper.getMainLooper())
     private var isRunning = false
@@ -36,29 +38,38 @@ class StopwatchActivity : CsActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.view_stopwatch)
 
-        val root = findViewById<android.view.View>(android.R.id.content)
+        val root = findViewById<View>(android.R.id.content)
         applyEdgeToEdgePadding(root)
         applyFont(root)
 
         navbar = findViewById(R.id.navbar)
-
         counterView = findViewById(R.id.counter)
+        counterStartButton = findViewById(R.id.start_stopwatch)
+        counterResetButton = findViewById(R.id.reset_counter)
 
-        counterView?.setOnClickListener {
-            if (isRunning) {
-                pauseStopwatch()
-            } else {
-                startStopwatch()
-            }
+        counterView.setOnClickListener {
+            toggleStopwatch()
         }
 
-        counterView?.setOnLongClickListener {
+        counterStartButton.setOnClickListener {
+            toggleStopwatch()
+        }
+
+        counterView.setOnLongClickListener {
             resetStopwatch()
             true
         }
 
-        findViewById<WdButton>(R.id.reset_counter).setOnClickListener {
+        counterResetButton.setOnClickListener {
             resetStopwatch()
+        }
+    }
+
+    private fun toggleStopwatch() {
+        if (isRunning) {
+            pauseStopwatch()
+        } else {
+            startStopwatch()
         }
     }
 
@@ -66,6 +77,7 @@ class StopwatchActivity : CsActivity() {
         navbar.visibility = View.GONE
         startTime = SystemClock.elapsedRealtime() - pausedElapsed
         isRunning = true
+        counterStartButton.setText("Pause stopwatch")
         handler.post(ticker)
     }
 
@@ -73,6 +85,7 @@ class StopwatchActivity : CsActivity() {
         navbar.visibility = View.VISIBLE
         pausedElapsed = SystemClock.elapsedRealtime() - startTime
         isRunning = false
+        counterStartButton.setText("Start stopwatch")
         handler.removeCallbacks(ticker)
     }
 
@@ -80,6 +93,7 @@ class StopwatchActivity : CsActivity() {
         navbar.visibility = View.VISIBLE
         isRunning = false
         pausedElapsed = 0L
+        counterStartButton.setText("Start stopwatch")
         handler.removeCallbacks(ticker)
         counterView?.text = "0"
     }
