@@ -95,6 +95,7 @@ class TimerActivity : CsActivity() {
         val hasTimer = initialMs > 0L
         val canStart = remainingMs > 0L
         val hasTimerActive = remainingMs > 0L
+        val showNavbar = !isRunning || remainingMs <= 0L || isEditMode
 
         startButton.visibility =
             if (hasTimer && !isEditMode && hasTimerActive) View.VISIBLE else View.GONE
@@ -105,6 +106,8 @@ class TimerActivity : CsActivity() {
         startButton.setText(
             if (isRunning) "Pause timer" else "Start timer"
         )
+
+        navbar.visibility = if (showNavbar) View.VISIBLE else View.GONE
 
         startButton.isEnabled = canStart || isRunning
     }
@@ -187,7 +190,6 @@ class TimerActivity : CsActivity() {
         isRunning = true
         startTime = SystemClock.elapsedRealtime()
         handler.post(ticker)
-        navbar.visibility = View.GONE
         updateButtons()
     }
 
@@ -198,7 +200,6 @@ class TimerActivity : CsActivity() {
         remainingMs -= elapsed
 
         isRunning = false
-        navbar.visibility = View.VISIBLE
         handler.removeCallbacks(ticker)
         updateButtons()
     }
@@ -206,7 +207,6 @@ class TimerActivity : CsActivity() {
     private fun resetTimer() {
         handler.removeCallbacks(ticker)
         isRunning = false
-        navbar.visibility = View.VISIBLE
         remainingMs = initialMs
         timerButton.text = formatMillis(initialMs)
         updateButtons()
