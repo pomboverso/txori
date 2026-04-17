@@ -1,6 +1,6 @@
 # Branding
 
-This document defines the official visual assets and usage guidelines for Mako.
+This document defines the official visual assets and usage guidelines for Txori.
 
 ---
 
@@ -14,13 +14,13 @@ Standard header image for social previews and repository sharing.
 
 ## Header (TV)
 
-![Txori Header TV](./img/txori_tvBanner_1280x720.svg)
+![Txori Header TV](./img/png/tvBanner.png)
 
 Optimized for TV and wide-screen displays.
 
 ## Feature Graphic
 
-![Txori Header TV](./img/txori_featureGraphic_1024x500.svg)
+![Txori Header TV](./img/png/featureGraphic.png)
 
 Feature graphic on f-droid.
 

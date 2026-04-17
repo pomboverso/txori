@@ -41,7 +41,7 @@
 
     <!-- APP / About -->
     <string name="app_name" translatable="false">Txori</string>
-    <string name="app_description">A lightweight, distraction-free Android launcher that’s privacy-first and entirely on-device, designed for focus and simplicity.</string>
+    <string name="app_description">A minimal, privacy-first focus session app designed to help you stay present and intentional with your time.</string>
     <string name="icon_block_desc">No Background Tasks</string>
     <string name="icon_ads_desc">No Ads</string>
     <string name="icon_location_desc">No Trackers</string>
