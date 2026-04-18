@@ -8,9 +8,9 @@ Built entirely in native Kotlin, runs fully on-device, avoids tracking, and keep
 minimum by emphasizing clarity and intentional interaction.
 
 - Original author: [Pombo](https://github.com/pomboverso)
-- Original repository: https://github.com/pomboverso/t
+- Original repository: https://github.com/rama-o/txori
 - License: **GPL 3.0**
-- License link: https://www.gnu.org/licenses/gpl-3.0xori
+- License link: https://www.gnu.org/licenses/gpl-3.0
 
 ---
 

@@ -2,16 +2,18 @@
 
 # Txori
 
-**Txori** is a minimal, privacy-first focus session app designed to help you stay present and intentional with your time.
+**Txori** is a minimal, privacy-first focus session app designed to help you stay present and
+intentional with your time.
 
-Built entirely in **native Kotlin**, Txori runs fully **on-device**, avoids tracking, no internet access, and no external APIs.
+Built entirely in **native Kotlin**, Txori runs fully **on-device**, avoids tracking, no internet
+access, and no external APIs.
 
 ---
 
 ## Screenshots
 
-| Focus                                                                     | Stopwatch                                                                     | About                                                                     |
-| ------------------------------------------------------------------------ | ---------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Focus                                                                    | Stopwatch                                                                    | About                                                                     |
+|--------------------------------------------------------------------------|------------------------------------------------------------------------------|---------------------------------------------------------------------------|
 | ![Home](./fastlane/metadata/android/en-US/images/phoneScreenshots/1.png) | ![Settings](./fastlane/metadata/android/en-US/images/phoneScreenshots/2.png) | ![About](./fastlane/metadata/android/en-US/images/phoneScreenshots/3.png) |
 
 ---
@@ -28,7 +30,8 @@ Built entirely in **native Kotlin**, Txori runs fully **on-device**, avoids trac
 
 - Available on **[F-Droid](https://f-droid.org/app/com.rama.txori)** for easy installation and
   updates.
-- Download the latest APK from the **[Releases page](https://github.com/pomboverso/txori/releases)** or use **[Obtanium](https://github.com/ImranR98/Obtainium)** to get the newest version directly
+- Download the latest APK from the **[Releases page](https://github.com/rama-o/txori/releases)** or
+  use **[Obtanium](https://github.com/ImranR98/Obtainium)** to get the newest version directly
   from the github releases.
 
 ---
@@ -42,8 +45,8 @@ Built entirely in **native Kotlin**, Txori runs fully **on-device**, avoids trac
 
 ## Tested Devices
 
-| Device       | OS         | Year | Status      |
-| ------------ | ---------- | ---- | ----------- |
+| Device       | OS         | Year | Status     |
+|--------------|------------|------|------------|
 | Pixel 8 Pro  | Android 16 | 2026 | ✅ Verified |
 | Pixel 6      | GrapheneOS | 2026 | ✅ Verified |
 | Samsung On 5 | Android 6  | 2015 | ✅ Verified |
