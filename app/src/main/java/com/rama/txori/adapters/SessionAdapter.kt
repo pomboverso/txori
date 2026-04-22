@@ -419,7 +419,7 @@ class SessionAdapter(
         durationInput.setText(row.task.duration.toString())
 
         dialogView.findViewById<WdButton>(R.id.delete_button).setOnClickListener {
-            dbHelper.removeTaskFromSession(db, row.sessionId, row.task.id)
+            dbHelper.removeStepFromSession(db, row.task.stepId)
             items.removeAt(position)
             notifyDataSetChanged()
             onDataChanged()

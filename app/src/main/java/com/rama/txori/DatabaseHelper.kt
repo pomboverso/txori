@@ -75,12 +75,12 @@ class DatabaseHelper(context: Context) :
         return tasks
     }
 
-    /** Get tasks for a session */
+    /** Get tasks for a session, ss.id is carried as stepId so we can delete the exact row */
     fun getSessionTasks(db: SQLiteDatabase, sessionId: Long): MutableList<Task> {
         val tasks = mutableListOf<Task>()
         val cursor = db.rawQuery(
             """
-            SELECT t.id, t.label, t.duration
+            SELECT ss.id, t.id, t.label, t.duration
             FROM session_steps ss
             JOIN tasks t ON ss.task_id = t.id
             WHERE ss.session_id = ?
@@ -91,9 +91,10 @@ class DatabaseHelper(context: Context) :
         while (cursor.moveToNext()) {
             tasks.add(
                 Task(
-                    id = cursor.getLong(0),
-                    label = cursor.getString(1),
-                    duration = cursor.getInt(2),
+                    stepId = cursor.getLong(0),
+                    id = cursor.getLong(1),
+                    label = cursor.getString(2),
+                    duration = cursor.getInt(3),
                 )
             )
         }
@@ -140,12 +141,9 @@ class DatabaseHelper(context: Context) :
         return taskId
     }
 
-    fun removeTaskFromSession(db: SQLiteDatabase, sessionId: Long, taskId: Long) {
-        db.delete(
-            "session_steps",
-            "session_id = ? AND task_id = ?",
-            arrayOf(sessionId.toString(), taskId.toString())
-        )
+    /** Delete a single step row by its own primary key. avoids removing duplicate tasks across sessions */
+    fun removeStepFromSession(db: SQLiteDatabase, stepId: Long) {
+        db.delete("session_steps", "id = ?", arrayOf(stepId.toString()))
     }
 
     // PRIVATE HELPERS
@@ -192,7 +190,7 @@ class DatabaseHelper(context: Context) :
         val tasks = mutableListOf<Task>()
         val cursor = db.rawQuery(
             """
-            SELECT t.id, t.label, t.duration
+            SELECT ss.id, t.id, t.label, t.duration
             FROM session_steps ss
             JOIN tasks t ON ss.task_id = t.id
             ORDER BY ss.session_id, ss.step_order
@@ -202,9 +200,10 @@ class DatabaseHelper(context: Context) :
         while (cursor.moveToNext()) {
             tasks.add(
                 Task(
-                    id = cursor.getLong(0),
-                    label = cursor.getString(1),
-                    duration = cursor.getInt(2)
+                    stepId = cursor.getLong(0),
+                    id = cursor.getLong(1),
+                    label = cursor.getString(2),
+                    duration = cursor.getInt(3)
                 )
             )
         }
@@ -266,11 +265,6 @@ class DatabaseHelper(context: Context) :
 
         repeat(2) {
             s1("Crunches x12", 60)
-            addRest()
-        }
-
-        repeat(2) {
-            s1("Flutter Kicks", 30)
             addRest()
         }
 
