@@ -4,8 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/bgColor"
-    android:textColor="?attr/foregroundColor">
+    android:background="@color/bg_primary">
 
     <LinearLayout
         android:id="@+id/time_container"
@@ -146,10 +145,5 @@
         android:visibility="gone"
         android:background="@color/button_secondary_color"
         android:text="Switch to Work Mode" />
-
-    <com.rama.txori.widgets.WdNavbar
-        android:id="@+id/navbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
 </LinearLayout>
