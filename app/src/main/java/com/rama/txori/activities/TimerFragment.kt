@@ -1,0 +1,197 @@
+package com.rama.txori.activities
+
+import android.app.Fragment
+import android.content.Context
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.SystemClock
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
+import com.rama.txori.R
+import com.rama.txori.widgets.WdButton
+
+class TimerFragment : Fragment() {
+
+    private lateinit var timerButton: TextView
+    private lateinit var editView: LinearLayout
+    private lateinit var timerInput: EditText
+    private lateinit var addTimer: WdButton
+    private lateinit var startButton: WdButton
+    private lateinit var resetButton: WdButton
+    private lateinit var editModeButton: WdButton
+
+    private var isRunning   = false
+    private var initialMs   = 0L
+    private var remainingMs = 0L
+    private var isEditMode  = false
+    private var startTime   = 0L
+
+    private val handler = Handler(Looper.getMainLooper())
+
+    private val ticker = object : Runnable {
+        override fun run() {
+            if (!isRunning) return
+            val elapsed = SystemClock.elapsedRealtime() - startTime
+            val msLeft  = remainingMs - elapsed
+            if (msLeft <= 0) {
+                timerButton.text = "00:00:00"
+                isRunning    = false
+                remainingMs  = 0L
+                updateButtons()
+                return
+            }
+            timerButton.text = formatMillis(msLeft)
+            handler.postDelayed(this, 16)
+        }
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = inflater.inflate(R.layout.view_timer, container, false)
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        timerButton    = view.findViewById(R.id.timer_button)
+        editView       = view.findViewById(R.id.edit_view)
+        timerInput     = view.findViewById(R.id.timer)
+        addTimer       = view.findViewById(R.id.add_timer)
+        startButton    = view.findViewById(R.id.start_timer)
+        resetButton    = view.findViewById(R.id.reset_timer)
+        editModeButton = view.findViewById(R.id.edit_mode)
+
+        timerButton.text = "00:00:00"
+
+        editModeButton.setOnClickListener { setEditMode(!isEditMode) }
+        timerButton.setOnClickListener    { toggleTimer() }
+        timerButton.setOnLongClickListener { resetTimer(); true }
+        startButton.setOnClickListener   { toggleTimer() }
+        addTimer.setOnClickListener      { applyInput() }
+        resetButton.setOnClickListener   { resetTimer() }
+
+        updateButtons()
+    }
+
+    private fun toggleTimer() {
+        if (isRunning) pauseTimer() else startTimer()
+        startButton.setText(if (isRunning) "Pause timer" else "Start timer")
+    }
+
+    private fun updateButtons() {
+        val hasTimer       = initialMs > 0L
+        val canStart       = remainingMs > 0L
+        val hasTimerActive = remainingMs > 0L
+        val showNavbar     = !isRunning || remainingMs <= 0L || isEditMode
+
+        startButton.visibility =
+            if (hasTimer && !isEditMode && hasTimerActive) View.VISIBLE else View.GONE
+        resetButton.visibility =
+            if (hasTimer && !isEditMode) View.VISIBLE else View.GONE
+        startButton.setText(if (isRunning) "Pause timer" else "Start timer")
+        startButton.isEnabled = canStart || isRunning
+
+        (activity as? MainActivity)?.setNavbarVisible(showNavbar)
+    }
+
+    private fun updateEditModeUI() {
+        if (isEditMode) {
+            editModeButton.setText("Switch to work mode")
+            timerButton.visibility = View.GONE
+            editView.visibility    = View.VISIBLE
+            addTimer.visibility    = View.VISIBLE
+
+            val digits = timerButton.text.toString()
+                .filter { it.isDigit() }.takeLast(6).trimStart('0')
+            timerInput.setText(digits)
+            timerInput.setSelection(timerInput.text.length)
+            timerInput.requestFocus()
+            showKeyboard()
+        } else {
+            editModeButton.setText("Switch to edit mode")
+            editView.visibility    = View.GONE
+            addTimer.visibility    = View.GONE
+            timerButton.visibility = View.VISIBLE
+            hideKeyboard()
+        }
+        updateButtons()
+    }
+
+    private fun setEditMode(enabled: Boolean) {
+        isEditMode = enabled
+        updateEditModeUI()
+    }
+
+    private fun applyInput() {
+        val digits    = timerInput.text.toString().filter { it.isDigit() }.takeLast(6)
+        timerButton.text = formatDigits(digits)
+        initialMs    = digitsToMillis(digits)
+        remainingMs  = initialMs
+        updateButtons()
+        setEditMode(false)
+    }
+
+    private fun startTimer() {
+        if (remainingMs <= 0L) return
+        isRunning = true
+        startTime = SystemClock.elapsedRealtime()
+        handler.post(ticker)
+        updateButtons()
+    }
+
+    private fun pauseTimer() {
+        if (!isRunning) return
+        remainingMs -= SystemClock.elapsedRealtime() - startTime
+        isRunning   = false
+        handler.removeCallbacks(ticker)
+        updateButtons()
+    }
+
+    private fun resetTimer() {
+        handler.removeCallbacks(ticker)
+        isRunning   = false
+        remainingMs = initialMs
+        timerButton.text = formatMillis(initialMs)
+        updateButtons()
+    }
+
+    private fun digitsToMillis(digits: String): Long {
+        val padded = digits.padStart(6, '0')
+        val hh = padded.substring(0, 2).toLong()
+        val mm = padded.substring(2, 4).toLong()
+        val ss = padded.substring(4, 6).toLong()
+        return ((hh * 3600) + (mm * 60) + ss) * 1000
+    }
+
+    private fun formatDigits(digits: String): String {
+        val padded = digits.padStart(6, '0')
+        return "${padded.substring(0, 2)}:${padded.substring(2, 4)}:${padded.substring(4, 6)}"
+    }
+
+    private fun formatMillis(ms: Long): String {
+        val total = ms / 1000
+        return "%02d:%02d:%02d".format(total / 3600, (total % 3600) / 60, total % 60)
+    }
+
+    private fun showKeyboard() {
+        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.showSoftInput(timerInput, InputMethodManager.SHOW_IMPLICIT)
+    }
+
+    private fun hideKeyboard() {
+        val imm = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(timerInput.windowToken, 0)
+    }
+
+    override fun onDestroyView() {
+        handler.removeCallbacks(ticker)
+        super.onDestroyView()
+    }
+}

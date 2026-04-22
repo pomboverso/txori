@@ -4,8 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="?attr/bgColor"
-    android:textColor="?attr/foregroundColor">
+    android:background="@color/bg_primary">
 
     <LinearLayout
         android:id="@+id/time_container"
@@ -65,8 +64,7 @@
                 <ImageView
                     android:layout_width="24sp"
                     android:layout_height="24sp"
-                    android:src="@drawable/icon_refresh"
-                    android:textSize="16sp" />
+                    android:src="@drawable/icon_refresh" />
             </FrameLayout>
 
             <FrameLayout
@@ -80,8 +78,7 @@
                 <ImageView
                     android:layout_width="24sp"
                     android:layout_height="24sp"
-                    android:src="@drawable/icon_30_timer"
-                    android:textSize="16sp" />
+                    android:src="@drawable/icon_30_timer" />
             </FrameLayout>
 
             <FrameLayout
@@ -96,8 +93,7 @@
                     android:id="@+id/play_pause_icon"
                     android:layout_width="24sp"
                     android:layout_height="24sp"
-                    android:src="@drawable/icon_play"
-                    android:textSize="16sp" />
+                    android:src="@drawable/icon_play" />
             </FrameLayout>
 
             <FrameLayout
@@ -110,8 +106,7 @@
                 <ImageView
                     android:layout_width="24sp"
                     android:layout_height="24sp"
-                    android:src="@drawable/icon_next"
-                    android:textSize="16sp" />
+                    android:src="@drawable/icon_next" />
             </FrameLayout>
         </LinearLayout>
     </LinearLayout>
@@ -150,10 +145,5 @@
         android:visibility="gone"
         android:background="@color/button_secondary_color"
         android:text="Switch to Work Mode" />
-
-    <com.rama.txori.widgets.WdNavbar
-        android:id="@+id/navbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
 </LinearLayout>

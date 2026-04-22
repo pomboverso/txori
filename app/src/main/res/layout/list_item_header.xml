@@ -5,6 +5,45 @@
     android:orientation="horizontal"
     android:gravity="center">
 
+    <FrameLayout
+        android:id="@+id/edit_session_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12sp"
+        android:paddingStart="22sp">
+
+        <ImageView
+            android:layout_width="18sp"
+            android:layout_height="18sp"
+            android:src="@drawable/icon_edit" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/ascend_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12sp">
+
+        <ImageView
+            android:layout_width="24sp"
+            android:layout_height="24sp"
+            android:src="@drawable/icon_chevron_up_solid"
+            android:contentDescription="Ascend" />
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/descend_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="12sp">
+
+        <ImageView
+            android:layout_width="24sp"
+            android:layout_height="24sp"
+            android:src="@drawable/icon_chevron_down_solid"
+            android:contentDescription="Descend" />
+    </FrameLayout>
+
     <TextView
         android:id="@+id/group_label"
         android:layout_width="0dp"
@@ -17,19 +56,6 @@
         android:textColor="@color/foreground" />
 
     <FrameLayout
-        android:id="@+id/edit_session_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="12sp">
-
-        <ImageView
-            android:layout_width="18sp"
-            android:layout_height="18sp"
-            android:src="@drawable/icon_edit"
-            android:textSize="16sp" />
-    </FrameLayout>
-
-    <FrameLayout
         android:id="@+id/add_task"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,8 +64,7 @@
         <ImageView
             android:layout_width="18sp"
             android:layout_height="18sp"
-            android:src="@drawable/icon_plus_solid"
-            android:textSize="16sp" />
+            android:src="@drawable/icon_plus_solid" />
     </FrameLayout>
 
     <FrameLayout
@@ -51,8 +76,7 @@
         <ImageView
             android:layout_width="18sp"
             android:layout_height="18sp"
-            android:src="@drawable/icon_refresh"
-            android:textSize="16sp" />
+            android:src="@drawable/icon_refresh" />
     </FrameLayout>
 
     <FrameLayout
@@ -65,8 +89,7 @@
             android:id="@+id/start_group_icon"
             android:layout_width="18sp"
             android:layout_height="18sp"
-            android:src="@drawable/icon_play"
-            android:textSize="16sp" />
+            android:src="@drawable/icon_play" />
     </FrameLayout>
 
 </LinearLayout>
