@@ -1,9 +1,11 @@
+import java.time.LocalDate
+
 plugins {
-    id("com.android.application")
-    id("org.jetbrains.kotlin.android")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
 }
 
-def currentYear = java.time.LocalDate.now().getYear()
+val currentYear = LocalDate.now().year
 
 android {
     namespace = "com.rama.txori"
@@ -13,8 +15,8 @@ android {
         applicationId = "com.rama.txori"
         minSdk = 21
         targetSdk = 36
-        versionCode = 1
-        versionName = currentYear + "." + versionCode.toString()
+        versionCode = 2
+        versionName = "$currentYear.$versionCode"
     }
 
     dependenciesInfo {
@@ -22,23 +24,24 @@ android {
         includeInBundle = false
     }
 
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-            outputFileName = "txori_${versionName}.apk"
+    applicationVariants.all {
+        outputs.all {
+            (this as com.android.build.gradle.internal.api.BaseVariantOutputImpl)
+                    .outputFileName = "txori_${versionName}.apk"
         }
     }
 
     buildTypes {
         release {
-            minifyEnabled = false
+            isMinifyEnabled = false
             vcsInfo.include = false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig = signingConfigs.debug
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("debug")
         }
         debug {
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-dev"
-            signingConfig = signingConfigs.debug
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 
@@ -55,10 +58,11 @@ android {
         generateLocaleConfig = true
     }
 
-    packagingOptions {
-        exclude 'META-INF/*.version'
-        exclude 'META-INF/com/android/build/gradle/app-metadata.properties'
-
+    packaging {
+        resources {
+            excludes += "META-INF/*.version"
+            excludes += "META-INF/com/android/build/gradle/app-metadata.properties"
+        }
         jniLibs {
             useLegacyPackaging = true
         }
