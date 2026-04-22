@@ -5,17 +5,18 @@
     android:orientation="horizontal"
     android:gravity="center">
 
-    <TextView
-        android:id="@+id/group_label"
-        android:layout_width="0dp"
+    <FrameLayout
+        android:id="@+id/edit_session_button"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="[-] Workout :: 44:00"
-        android:textSize="18sp"
-        android:paddingTop="12sp"
-        android:paddingBottom="12sp"
-        android:textColor="@color/foreground" />
+        android:padding="12sp"
+        android:paddingStart="22sp">
 
+        <ImageView
+            android:layout_width="18sp"
+            android:layout_height="18sp"
+            android:src="@drawable/icon_edit" />
+    </FrameLayout>
 
     <FrameLayout
         android:id="@+id/ascend_button"
@@ -43,17 +44,16 @@
             android:contentDescription="Descend" />
     </FrameLayout>
 
-    <FrameLayout
-        android:id="@+id/edit_session_button"
-        android:layout_width="wrap_content"
+    <TextView
+        android:id="@+id/group_label"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="12sp">
-
-        <ImageView
-            android:layout_width="18sp"
-            android:layout_height="18sp"
-            android:src="@drawable/icon_edit" />
-    </FrameLayout>
+        android:layout_weight="1"
+        android:text="[-] Workout :: 44:00"
+        android:textSize="18sp"
+        android:paddingTop="12sp"
+        android:paddingBottom="12sp"
+        android:textColor="@color/foreground" />
 
     <FrameLayout
         android:id="@+id/add_task"
