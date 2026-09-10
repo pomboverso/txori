@@ -6,10 +6,14 @@ import android.media.ToneGenerator
 object SoundManager {
 
     private var toneGen: ToneGenerator? = null
-
+    
     fun init() {
-        if (toneGen == null) {
-            toneGen = ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+        if (toneGen != null) return
+
+        toneGen = try {
+            ToneGenerator(AudioManager.STREAM_MUSIC, 100)
+        } catch (e: RuntimeException) {
+            null
         }
     }
 
