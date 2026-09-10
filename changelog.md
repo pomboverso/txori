@@ -1,5 +1,9 @@
 # Changelog
 
+## 19
+
+- Prevent internet to ever be added by a dependency
+
 ## 18
 
 - Fix timer freeze on skip
