@@ -2,7 +2,7 @@
 
 ## 19
 
-- Prevent internet to ever be added by a dependency
+- Prevent unwanted permissions to ever be added by third parties dependencies
 
 ## 18
 
